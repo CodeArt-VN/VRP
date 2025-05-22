@@ -10,13 +10,15 @@ namespace SmartRouting.Controllers
     public class RoutesController : ControllerBase
     {
 		private readonly ApplicationDbContext _context;
+		private readonly DistanceService _distanceService;
         private readonly ILogger<RoutesController> _logger;
 
 
 
-		public RoutesController(ApplicationDbContext context, ILogger<RoutesController> logger)
+		public RoutesController(ApplicationDbContext context, DistanceService distanceService, ILogger<RoutesController> logger)
 		{
 			_context = context;
+			_distanceService = distanceService;
 			_logger = logger;
 		}
 
@@ -32,7 +34,7 @@ namespace SmartRouting.Controllers
                     return BadRequest("Vehicles and Orders cannot be null.");
                 }
 
-				OrderAssignmentService orderAssignmentService = new OrderAssignmentService(_context, request.Option);
+				OrderAssignmentService orderAssignmentService = new OrderAssignmentService(_context, _distanceService, request.Option);
 				RouteCalcResponse response = orderAssignmentService.CalculateRoutes(request.Vehicles, request.Orders, request.IDDepotAddress);
 
                 _logger.LogInformation("Routes calculated successfully.");

@@ -1,4 +1,3 @@
-
 {
     "version": "2.0.0",
     "tasks": [
@@ -12,7 +11,24 @@
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "isBackground": false,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "terminate-port-5123",
+            "type": "shell",
+            "command": "lsof -ti:5123 | xargs kill -9",
+            "problemMatcher": []
         }
     ]
 }

@@ -3,20 +3,14 @@
     "configurations": [
         {
             "name": ".NET Core Launch (web API with watch)",
-            "type": "coreclr",
+			"type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "dotnet",
-            "args": [
-                "watch",
-                "run",
-                "--project",
-                "${workspaceFolder}/SmartRouting/SmartRouting.csproj",
-                "--launch-profile",
-                "http" 
-            ],
+            "program": "${workspaceFolder}/SmartRouting/bin/Debug/net9.0/SmartRouting.dll",
+            "args": ["watch"],
             "cwd": "${workspaceFolder}/SmartRouting",
             "stopAtEntry": false,
+			"requireExactSource": false,
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
@@ -26,7 +20,14 @@
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
-            }
+            },
+            "launchSettingsProfile": "http",
+            "postDebugTask": "terminate-port-5123"
+
+
+         
+       
+           
         },
         {
             "name": ".NET Core Launch (web API)",
@@ -47,7 +48,8 @@
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
             },
-            "launchSettingsProfile": "http"
+            "launchSettingsProfile": "http",
+            "postDebugTask": "terminate-port-5123"
         },
         {
             "name": ".NET Core Test",
@@ -62,7 +64,8 @@
             ],
             "cwd": "${workspaceFolder}/SmartRouting.Tests",
             "stopAtEntry": false,
-            "console": "internalConsole"
+            "console": "internalConsole",
+            "postDebugTask": "terminate-port-5123"
         }
     ]
 }

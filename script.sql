@@ -11,3 +11,7 @@ SELECT
     NULL                                      -- Giả sử Address1 không có trong tbl_Contact hoặc bạn muốn để NULL
 FROM
     tbl_Contact c;
+
+
+
+	SELECT * FROM tbl_002
