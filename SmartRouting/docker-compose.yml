@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  smartrouting:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    ports:
+      - "5111:80"
+    volumes:
+      - ./bin/Debug/net9.0:/app

@@ -1,0 +1,68 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (web API with watch)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "dotnet",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/SmartRouting/SmartRouting.csproj",
+                "--launch-profile",
+                "http" 
+            ],
+            "cwd": "${workspaceFolder}/SmartRouting",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": ".NET Core Launch (web API)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/SmartRouting/bin/Debug/net9.0/SmartRouting.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/SmartRouting",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "launchSettingsProfile": "http"
+        },
+        {
+            "name": ".NET Core Test",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "dotnet",
+            "args": [
+                "test",
+                "--project",
+                "${workspaceFolder}/SmartRouting.Tests/SmartRouting.Tests.csproj"
+            ],
+            "cwd": "${workspaceFolder}/SmartRouting.Tests",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+    ]
+}

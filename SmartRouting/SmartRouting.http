@@ -1,0 +1,62 @@
+@SmartRouting_HostAddress = http://localhost:5107
+
+### Address API
+# Get all addresses
+GET {{SmartRouting_HostAddress}}/api/Address
+Accept: application/json
+
+###
+# Create a new address
+POST {{SmartRouting_HostAddress}}/api/Address
+Content-Type: application/json
+{
+  "name": "Test Address",
+  "phone": "123456789",
+  "district": "Test District",
+  "province": "Test Province",
+  "ward": "Test Ward",
+  "street": "Test Street",
+  "address1": "Test Address1",
+  "address2": "Test Address2",
+  "latitude": 10.0,
+  "longitude": 20.0
+}
+
+###
+# Index distances between addresses
+POST {{SmartRouting_HostAddress}}/api/Address/IndexDistances
+Accept: application/json
+
+### Vehicle Routing API
+# Assign orders to vehicles
+POST {{SmartRouting_HostAddress}}/api/VehicleRouting/AssignOrders
+Content-Type: application/json
+{
+  "vehicles": [
+    {
+      "id": 1,
+      "code": "V001",
+      "name": "Vehicle 1",
+      "remainingVolume": 100.0,
+      "remainingWeight": 1000.0,
+      "currentLocation": "Location1"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "IDAddress": 1,
+      "deliveryType": "Standard",
+      "orderLines": [
+        { "item": "Item1", "quantity": 1, "weight": 10.0, "volume": 1.0 }
+      ],
+      "deadline": "2025-04-16T00:00:00",
+      "priority": "High"
+    }
+  ],
+  "idDepotAddress": 1
+}
+
+### Weather Forecast API
+GET {{SmartRouting_HostAddress}}/weatherforecast/
+Accept: application/json

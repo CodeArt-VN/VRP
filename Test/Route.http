@@ -1,0 +1,663 @@
+@SmartRouting_HostAddress = http://localhost:5123
+
+### Calculate Routes
+# @name calculateRoutes
+POST {{SmartRouting_HostAddress}}/api/Routes/Calc
+Content-Type: application/json
+
+{
+  "Option": {
+	"priority": [
+     "OrderType",
+	 "Distance",
+     "Weight",
+     "Volume",
+     "Cost"
+   ],
+    "weightOption": "Recommended",
+    "volumeOption": "Recommended"
+  },
+
+  "vehicles": [
+    {
+      "id": 1,
+      "code": "V001",
+      "name": "Vehicle 1 (1-2 Ton)",
+      "length": 5.0,
+      "width": 2.0,
+      "height": 2.0,
+      "vehicleType": "Truck",
+      "minVolume": 0.0,
+      "recommendedVolume": 15.0,
+      "maxVolume": 20.0,
+      "minWeight": 1000.0,
+      "recommendedWeight": 1500.0,
+      "maxWeight": 2000.0,
+      "operatingArea": "City",
+      "restrictedRoutes": null
+    },
+    {
+      "id": 2,
+      "code": "V002",
+      "name": "Vehicle 2 (1-2 Ton)",
+      "length": 5.0,
+      "width": 2.0,
+      "height": 2.0,
+      "vehicleType": "Truck",
+      "minVolume": 0.0,
+      "recommendedVolume": 15.0,
+      "maxVolume": 20.0,
+      "minWeight": 1000.0,
+      "recommendedWeight": 1500.0,
+      "maxWeight": 2000.0,
+      "operatingArea": "City",
+      "restrictedRoutes": null
+    },
+    {
+      "id": 3,
+      "code": "V003",
+      "name": "Vehicle 3 (1-2 Ton)",
+      "length": 5.0,
+      "width": 2.0,
+      "height": 2.0,
+      "vehicleType": "Truck",
+      "minVolume": 0.0,
+      "recommendedVolume": 15.0,
+      "maxVolume": 20.0,
+      "minWeight": 1000.0,
+      "recommendedWeight": 1500.0,
+      "maxWeight": 2000.0,
+      "operatingArea": "City",
+      "restrictedRoutes": null
+    },
+    {
+      "id": 4,
+      "code": "V004",
+      "name": "Vehicle 4 (1-2 Ton)",
+      "length": 5.0,
+      "width": 2.0,
+      "height": 2.0,
+      "vehicleType": "Truck",
+      "minVolume": 0.0,
+      "recommendedVolume": 15.0,
+      "maxVolume": 20.0,
+      "minWeight": 1000.0,
+      "recommendedWeight": 1500.0,
+      "maxWeight": 2000.0,
+      "operatingArea": "City",
+      "restrictedRoutes": null
+    },
+    {
+      "id": 5,
+      "code": "V005",
+      "name": "Vehicle 5 (1-2 Ton)",
+      "length": 5.0,
+      "width": 2.0,
+      "height": 2.0,
+      "vehicleType": "Truck",
+      "minVolume": 0.0,
+      "recommendedVolume": 15.0,
+      "maxVolume": 20.0,
+      "minWeight": 1000.0,
+      "recommendedWeight": 1500.0,
+      "maxWeight": 2000.0,
+      "operatingArea": "City",
+      "restrictedRoutes": null
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "IDAddress": 1,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 1 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+      ]
+    },
+    {
+      "id": 2,
+      "IDAddress": 2,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 2 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+      ]
+    },
+    {
+      "id": 3,
+      "IDAddress": 3,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 3 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+      ]
+    },
+    {
+      "id": 4,
+      "IDAddress": 4,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 4 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+      ]
+    },
+    {
+      "id": 5,
+      "IDAddress": 5,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 5 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+      ]
+    },
+    {
+      "id": 6,
+      "IDAddress": 6,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 6 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+      ]
+    },
+    {
+      "id": 7,
+      "IDAddress": 7,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 7 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+      ]
+    },
+    {
+      "id": 8,
+      "IDAddress": 8,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 8 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+      ]
+    },
+    {
+      "id": 9,
+      "IDAddress": 9,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 9 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+      ]
+    },
+    {
+      "id": 10,
+      "IDAddress": 10,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 10 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+      ]
+    },
+    {
+      "id": 11,
+      "IDAddress": 11,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 11 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+      ]
+    },
+    {
+      "id": 12,
+      "IDAddress": 12,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 12 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+      ]
+    },
+    {
+      "id": 13,
+      "IDAddress": 13,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 13 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+      ]
+    },
+    {
+      "id": 14,
+      "IDAddress": 14,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 14 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+      ]
+    },
+    {
+      "id": 15,
+      "IDAddress": 15,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 15 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+      ]
+    },
+    {
+      "id": 16,
+      "IDAddress": 16,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 16 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+      ]
+    },
+    {
+      "id": 17,
+      "IDAddress": 17,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 17 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+      ]
+    },
+    {
+      "id": 18,
+      "IDAddress": 18,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 18 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+      ]
+    },
+    {
+      "id": 19,
+      "IDAddress": 19,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 19 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+      ]
+    },
+    {
+      "id": 20,
+      "IDAddress": 20,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 20 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+      ]
+    },
+    {
+      "id": 21,
+      "IDAddress": 21,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 21 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+      ]
+    },
+    {
+      "id": 22,
+      "IDAddress": 22,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 22 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+      ]
+    },
+    {
+      "id": 23,
+      "IDAddress": 23,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 23 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+      ]
+    },
+    {
+      "id": 24,
+      "IDAddress": 24,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 24 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+      ]
+    },
+    {
+      "id": 25,
+      "IDAddress": 25,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 25 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+      ]
+    },
+    {
+      "id": 26,
+      "IDAddress": 26,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 26 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+      ]
+    },
+    {
+      "id": 27,
+      "IDAddress": 27,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 27 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+      ]
+    },
+    {
+      "id": 28,
+      "IDAddress": 28,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 28 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+      ]
+    },
+    {
+      "id": 29,
+      "IDAddress": 29,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 29 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+      ]
+    },
+    {
+      "id": 30,
+      "IDAddress": 30,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 30 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+      ]
+    },
+    {
+      "id": 31,
+      "IDAddress": 31,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 31 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+      ]
+    },
+    {
+      "id": 32,
+      "IDAddress": 32,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 32 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+      ]
+    },
+    {
+      "id": 33,
+      "IDAddress": 33,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 33 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+      ]
+    },
+    {
+      "id": 34,
+      "IDAddress": 34,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 34 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+      ]
+    },
+    {
+      "id": 35,
+      "IDAddress": 35,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 35 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+      ]
+    },
+    {
+      "id": 36,
+      "IDAddress": 36,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 36 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+      ]
+    },
+    {
+      "id": 37,
+      "IDAddress": 37,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 37 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+      ]
+    },
+    {
+      "id": 38,
+      "IDAddress": 38,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 38 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+      ]
+    },
+    {
+      "id": 39,
+      "IDAddress": 39,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 39 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+      ]
+    },
+    {
+      "id": 40,
+      "IDAddress": 40,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 40 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+      ]
+    },
+    {
+      "id": 41,
+      "IDAddress": 41,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 41 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+      ]
+    },
+    {
+      "id": 42,
+      "IDAddress": 42,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 42 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+      ]
+    },
+    {
+      "id": 43,
+      "IDAddress": 43,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 43 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+      ]
+    },
+    {
+      "id": 44,
+      "IDAddress": 44,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 44 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+      ]
+    },
+    {
+      "id": 45,
+      "IDAddress": 45,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 45 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+      ]
+    },
+    {
+      "id": 46,
+      "IDAddress": 46,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 46 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+      ]
+    },
+    {
+      "id": 47,
+      "IDAddress": 47,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 47 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+      ]
+    },
+    {
+      "id": 48,
+      "IDAddress": 48,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 48 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+      ]
+    },
+    {
+      "id": 49,
+      "IDAddress": 49,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 49 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+      ]
+    },
+    {
+      "id": 50,
+      "IDAddress": 50,
+      "deliveryType": "Standard",
+      "status": "Pending",
+      "priority": "Medium",
+      "deadline": "2025-05-23T17:00:00Z",
+      "orderLines": [
+        { "item": "Order 50 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+      ]
+    }
+  ],
+  "IDDepotAddress": 0
+}
+
+###

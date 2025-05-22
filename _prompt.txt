@@ -1,0 +1,69 @@
+
+Tạo prompt để ra lệnh cho copilot github viết phần mềm
+
+Viết API phân tài giao hàng tự động bằng C# .net Core 9.0, hoàn chỉnh và tối ưu. Xử lý nghiệp vụ sau:
+
+- Tôi có nhiều kho hàng và các hub trung chuyển hàng hóa.
+- Tôi có nhiều xe giao hàng
+- Tôi có danh sách contact (gồm Depot, distributor, Hub, Customer, Seller)
+- Tôi có danh sách các đơn hàng cần giao. Mỗi đơn hàng có thông tin chi tiết item, số lượng, cân nặng, thể tích của món hàng cần giao
+- Tôi có danh sách các đơn hàng cần lấy từ seller để mang về các hub hoặc kho.
+
+- Hiện tại nhân viên của tôi phải xem danh sách đơn hàng và dựa vào kinh nghiệm để quyết định xe nào sẽ giao đơn hàng nào. Thao tác này gọi là phân tài. Sau khi phân tài, các xe được phân tài sẽ đến kho hoặc hub được chỉ định để nhận hàng hóa cần giao. Các xe giao hàng xuất phát giao hàng. Trên đường đi, nếu xe còn trống sẽ được chỉ định đến các điểm lấy hàng từ seller để mang về kho hoặc hub.
+
+Hãy phân tích yêu cầu và thêm các ràng buộc thực tế khác mà tôi chưa nghĩ ra.
+
+
+
+
+1. **Chức năng cốt lõi**:
+   
+   
+
+   
+   - Phân bổ đơn hàng tự động cho tài xế dựa trên:
+     - Tất cả xe xuất phát từ kho được chỉ định.
+     - Khoảng cách gần nhất tính bằng met, lấy từ Hàm lấy khoảng cách 2 điểm từ dữ liệu đã index
+     - Tải trọng khả dụng của tài xế.
+     - Thời gian giao hàng yêu cầu (deadline).
+     - Mức độ ưu tiên của đơn hàng.
+     - Giới hạn khu vực hoạt động của tài xế.
+   - Tối ưu hóa phân bổ để giảm tổng thời gian giao hàng và chi phí (dựa trên khoảng cách hoặc thời gian di chuyển).
+
+2. **Các trường hợp cần cover**:
+   - **Trường hợp thông thường**: Phân bổ đơn hàng khi đủ tài xế và tài xế có thể nhận tất cả đơn hàng.
+   - **Không đủ tài xế**: Hiển thị danh sách đơn hàng chưa được gán và gợi ý ưu tiên đơn hàng quan trọng.
+   - **Tài xế bị giới hạn**: Tài xế chỉ nhận đơn trong khu vực nhất định hoặc vượt quá tải trọng.
+   - **Đơn hàng đặc biệt**: Đơn hàng có deadline gấp, yêu cầu tài xế cụ thể, hoặc kích thước lớn.
+   - **Thay đổi động**: Cho phép thêm/xóa đơn hàng hoặc tài xế trong thời gian thực và cập nhật phân bổ ngay lập tức.
+   - **Lỗi dữ liệu**: Xử lý địa chỉ không hợp lệ, tọa độ lỗi, hoặc thời gian không khả thi (ví dụ: deadline đã qua).
+
+3. **Giao diện và tương tác**:
+   - Tạo giao diện dòng lệnh (CLI) để nhập/xuất dữ liệu (danh sách đơn hàng, tài xế, kết quả phân bổ).
+   - (Tùy chọn) Tích hợp giao diện web đơn giản dùng Flask hoặc Django để nhập liệu và hiển thị kết quả (bảng hoặc bản đồ).
+   - Xuất báo cáo chi tiết: danh sách đơn hàng được gán, tài xế nhận đơn, khoảng cách, thời gian dự kiến.
+
+4. **Yêu cầu kỹ thuật**:
+   - Ngôn ngữ: Python 3.x.
+   - Thư viện đề xuất: `pandas` (quản lý dữ liệu), `geopy` (tính khoảng cách), `ortools` (tối ưu hóa lộ trình), `flask` (giao diện web nếu cần).
+   - Lưu trữ dữ liệu: Sử dụng SQLite hoặc file CSV để lưu đơn hàng, tài xế, và lịch sử phân bổ.
+   - Tối ưu hiệu suất: Đảm bảo code chạy nhanh với số lượng lớn đơn hàng (ví dụ: 1000 đơn, 100 tài xế).
+   - Kèm tài liệu: Mô tả cách cài đặt, chạy chương trình, và giải thích các hàm chính.
+
+5. **Xử lý lỗi và ngoại lệ**:
+   - Kiểm tra dữ liệu đầu vào (địa chỉ sai, tải trọng âm, v.v.).
+   - Thông báo lỗi thân thiện với người dùng (ví dụ: "Địa chỉ không tìm thấy, vui lòng kiểm tra lại").
+   - Ghi log các lỗi hoặc sự cố vào file để debug.
+
+6. **Tính mở rộng**:
+   - Dễ dàng thêm tính năng mới như tích hợp Google Maps API, gửi thông báo cho tài xế, hoặc phân tích hiệu suất giao hàng.
+   - Cho phép cấu hình: ví dụ, thay đổi tiêu chí ưu tiên (khoảng cách, thời gian, hoặc tải trọng).
+
+Vui lòng:
+- Viết code đầy đủ, có chú thích rõ ràng từng hàm và đoạn code.
+- Tạo cấu trúc thư mục chuyên nghiệp (ví dụ: `src/`, `data/`, `tests/`).
+- Bao gồm file `README.md` hướng dẫn cách cài đặt, chạy, và sử dụng phần mềm.
+- Viết các test case đơn giản để kiểm tra tính đúng đắn của thuật toán phân bổ.
+- Đảm bảo code tuân theo chuẩn PEP 8 và dễ bảo trì.
+
+Nếu có phần nào không rõ, hãy giả định hợp lý và giải thích lựa chọn của bạn trong code.

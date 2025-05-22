@@ -1,0 +1,429 @@
+@SmartRouting_HostAddress = http://localhost:5123
+
+POST {{SmartRouting_HostAddress}}/api/Address
+Content-Type: application/json
+
+[
+	{
+		"Id": 0,
+		"Name": "Kho 8 Nguyễn Bỉnh Khiêm",
+		"Latitude": 10.7869,
+		"Longitude": 106.7053,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 1,
+		"Name": "Bitexco Financial Tower",
+		"Latitude": 10.7716,
+		"Longitude": 106.7045,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 2,
+		"Name": "Saigon Opera House",
+		"Latitude": 10.777,
+		"Longitude": 106.703,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 3,
+		"Name": "Nguyen Hue Walking Street",
+		"Latitude": 10.7745,
+		"Longitude": 106.7038,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 4,
+		"Name": "Saigon Notre-Dame Basilica",
+		"Latitude": 10.779,
+		"Longitude": 106.699,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 5,
+		"Name": "War Remnants Museum",
+		"Latitude": 10.7794,
+		"Longitude": 106.6925,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 6,
+		"Name": "Ben Thanh Market",
+		"Latitude": 10.7725,
+		"Longitude": 106.698,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 7,
+		"Name": "Independence Palace",
+		"Latitude": 10.777,
+		"Longitude": 106.6953,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 8,
+		"Name": "Jade Emperor Pagoda",
+		"Latitude": 10.791,
+		"Longitude": 106.691,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 9,
+		"Name": "Tan Dinh Church",
+		"Latitude": 10.787,
+		"Longitude": 106.685,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 10,
+		"Name": "Saigon Central Post Office",
+		"Latitude": 10.7797,
+		"Longitude": 106.7,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 11,
+		"Name": "Random Location A - District 1",
+		"Latitude": 10.7985,
+		"Longitude": 106.7043,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 12,
+		"Name": "Random Location B - Phu Nhuan",
+		"Latitude": 10.7799,
+		"Longitude": 106.7093,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 13,
+		"Name": "Random Location C - District 1",
+		"Latitude": 10.7691,
+		"Longitude": 106.7701,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 14,
+		"Name": "Random Location D - District 3",
+		"Latitude": 10.7369,
+		"Longitude": 106.6311,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 15,
+		"Name": "Random Location E - District 10",
+		"Latitude": 10.7929,
+		"Longitude": 106.6251,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 16,
+		"Name": "Random Location F - District 1",
+		"Latitude": 10.7806,
+		"Longitude": 106.746,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 17,
+		"Name": "Random Location G - District 12",
+		"Latitude": 10.711,
+		"Longitude": 106.6343,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 18,
+		"Name": "Random Location H - District 1",
+		"Latitude": 10.7469,
+		"Longitude": 106.7711,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 19,
+		"Name": "Random Location I - District 1",
+		"Latitude": 10.7833,
+		"Longitude": 106.7461,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 20,
+		"Name": "Random Location J - District 11",
+		"Latitude": 10.7884,
+		"Longitude": 106.6353,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 21,
+		"Name": "Random Location K - District 1",
+		"Latitude": 10.7101,
+		"Longitude": 106.7713,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 22,
+		"Name": "Random Location L - District 1",
+		"Latitude": 10.7106,
+		"Longitude": 106.6591,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 23,
+		"Name": "Random Location M - District 10",
+		"Latitude": 10.7991,
+		"Longitude": 106.7712,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 24,
+		"Name": "Random Location N - District 1",
+		"Latitude": 10.8265,
+		"Longitude": 106.7762,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 25,
+		"Name": "Random Location O - District 1",
+		"Latitude": 10.7839,
+		"Longitude": 106.649,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 26,
+		"Name": "Random Location P - District 1",
+		"Latitude": 10.7798,
+		"Longitude": 106.7665,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 27,
+		"Name": "Random Location Q - District 1",
+		"Latitude": 10.74,
+		"Longitude": 106.6278,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 28,
+		"Name": "Random Location R - District 1",
+		"Latitude": 10.735,
+		"Longitude": 106.6242,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 29,
+		"Name": "Random Location S - District 1",
+		"Latitude": 10.7831,
+		"Longitude": 106.7083,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 30,
+		"Name": "Random Location T - District 1",
+		"Latitude": 10.8001,
+		"Longitude": 106.7137,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 31,
+		"Name": "Random Location U - District 1",
+		"Latitude": 10.7889,
+		"Longitude": 106.6249,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 32,
+		"Name": "Random Location V - District 1",
+		"Latitude": 10.7992,
+		"Longitude": 106.7591,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 33,
+		"Name": "Random Location W - District 1",
+		"Latitude": 10.7011,
+		"Longitude": 106.7118,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 34,
+		"Name": "Random Location X - District 1",
+		"Latitude": 10.761,
+		"Longitude": 106.7257,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 35,
+		"Name": "Random Location Y - District 1",
+		"Latitude": 10.8163,
+		"Longitude": 106.7121,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 36,
+		"Name": "Random Location Z - District 1",
+		"Latitude": 10.7865,
+		"Longitude": 106.7793,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 37,
+		"Name": "Random Location A1 - District 1",
+		"Latitude": 10.776,
+		"Longitude": 106.6263,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 38,
+		"Name": "Random Location B1 - District 1",
+		"Latitude": 10.7458,
+		"Longitude": 106.7078,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 39,
+		"Name": "Random Location C1 - District 1",
+		"Latitude": 10.7924,
+		"Longitude": 106.6568,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 40,
+		"Name": "Random Location D1 - District 1",
+		"Latitude": 10.7368,
+		"Longitude": 106.7708,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 41,
+		"Name": "Random Location E1 - District 1",
+		"Latitude": 10.7363,
+		"Longitude": 106.7094,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 42,
+		"Name": "Random Location F1 - District 1",
+		"Latitude": 10.786,
+		"Longitude": 106.7063,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 43,
+		"Name": "Random Location G1 - District 1",
+		"Latitude": 10.775,
+		"Longitude": 106.7103,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 44,
+		"Name": "Random Location H1 - District 1",
+		"Latitude": 10.8464,
+		"Longitude": 106.6805,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 45,
+		"Name": "Random Location I1 - District 1",
+		"Latitude": 10.7375,
+		"Longitude": 106.6608,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 46,
+		"Name": "Random Location J1 - District 1",
+		"Latitude": 10.752,
+		"Longitude": 106.6252,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 47,
+		"Name": "Random Location K1 - District 1",
+		"Latitude": 10.8062,
+		"Longitude": 106.6363,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 48,
+		"Name": "Random Location L1 - District 1",
+		"Latitude": 10.7119,
+		"Longitude": 106.701,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 49,
+		"Name": "Random Location M1 - District 1",
+		"Latitude": 10.8113,
+		"Longitude": 106.7013,
+		"Province": "Ho Chi Minh City"
+	},
+	{
+		"Id": 50,
+		"Name": "Random Location N1 - District 1",
+		"Latitude": 10.7441,
+		"Longitude": 106.7059,
+		"Province": "Ho Chi Minh City"
+	}
+]
+
+###
+
+# GET all addresses (first page, 10 items)
+GET {{SmartRouting_HostAddress}}/api/Address?page=1&pageSize=10
+
+###
+
+# GET all addresses with search
+GET {{SmartRouting_HostAddress}}/api/Address?search=Bitexco&page=1&pageSize=5
+
+###
+
+# GET address by ID (assuming ID 1 was posted successfully)
+GET {{SmartRouting_HostAddress}}/api/Address/1
+
+###
+
+# PUT (Update) address with ID 1
+# Ensure this address exists from the POST request or a previous run
+PUT {{SmartRouting_HostAddress}}/api/Address/1
+Content-Type: application/json
+
+{
+  "Id": 1,
+  "Name": "Bitexco Financial Tower (Updated)",
+  "Phone": "02839156156",
+  "District": "District 1",
+  "Province": "Ho Chi Minh City",
+  "Ward": "Ben Nghe",
+  "Street": "2 Hai Trieu",
+  "Address1": "2 Hai Trieu, Ben Nghe, District 1",
+  "Latitude": 10.7716,
+  "Longitude": 106.7045
+}
+
+###
+
+# PATCH (Partially update) address with ID 2
+# Ensure this address exists from the POST request or a previous run
+PATCH {{SmartRouting_HostAddress}}/api/Address/1
+Content-Type: application/json
+
+{
+  "Name": "Bitexco Financial Tower (Patched)",
+  "Phone": "02839156152"
+}
+
+###
+
+# DELETE address by ID (e.g., ID 10)
+# Ensure this address exists from the POST request or a previous run
+DELETE {{SmartRouting_HostAddress}}/api/Address/10
+
+###
+
+# POST to IndexDistances
+# This endpoint calculates and stores distances between addresses
+# It doesn't require a request body
+POST {{SmartRouting_HostAddress}}/api/Address/IndexDistances
+
+###
+
+# Example of trying to GET an address that might have been deleted
+GET {{SmartRouting_HostAddress}}/api/Address/10
