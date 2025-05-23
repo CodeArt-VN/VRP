@@ -14,4 +14,6 @@ FROM
 
 
 
-	SELECT * FROM tbl_002
+	SELECT * FROM
+	--DELETE
+	 tbl_002 ORDER BY Loc1

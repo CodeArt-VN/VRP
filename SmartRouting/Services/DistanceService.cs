@@ -28,7 +28,7 @@ namespace SmartRouting.Services
 		/// <summary>
 		/// Calculates the distance between two geographical points.
 		/// </summary>
-		public double CalculateDistance(Address fromAddress, Address toAddress, List<IndexDistance> cachedDistances, double minHaversineDistance = 1000)
+		public double CalculateDistance(Address fromAddress, Address toAddress, ref List<IndexDistance> cachedDistances, double minHaversineDistance = 1000)
 		{
 			if (fromAddress == null || toAddress == null)
 			{
@@ -41,10 +41,11 @@ namespace SmartRouting.Services
 				return 0.0; // Distance is zero if both addresses are the same
 			}
 
+			int a = fromAddress.Id < toAddress.Id ? fromAddress.Id : toAddress.Id;
+			int b = fromAddress.Id < toAddress.Id ? toAddress.Id : fromAddress.Id;
+
 			// Check cached distances
-			var cachedDistance = cachedDistances.FirstOrDefault(d =>
-			(d.Loc1 == fromAddress.Id && d.Loc2 == toAddress.Id)
-			|| (d.Loc1 == toAddress.Id && d.Loc2 == fromAddress.Id));
+			var cachedDistance = cachedDistances.FirstOrDefault(d => d.Loc1 == a && d.Loc2 == b );
 			if (cachedDistance != null && cachedDistance.Distance.HasValue)
 			{
 				// Return the cached distance if found
@@ -60,16 +61,27 @@ namespace SmartRouting.Services
 
 			distance = CalculateHaversineDistance(fromAddress.Location, toAddress.Location);
 
-			if (distance > minHaversineDistance)
-				return distance;
+			// Add the calculated distance to the cache
+			cachedDistances.Add(new IndexDistance { Loc1 = a, Loc2 = b, Distance = distance });
 			
+			
+			// double? googleMapsDistance = GetGoogleMapsDistanceAsync(fromAddress, toAddress).Result;
 
-			double? googleMapsDistance = GetGoogleMapsDistanceAsync(fromAddress, toAddress).Result;
+			// if (googleMapsDistance.HasValue)
+			// {
+			// 	// Add the Google Maps distance to the cache
+			// 	var newDistance = new IndexDistance
+			// 	{
+			// 		Loc1 = fromAddress.Id,
+			// 		Loc2 = toAddress.Id,
+			// 		Distance = googleMapsDistance.Value
+			// 	};
+			// 	cachedDistances.Add(newDistance);
 
-			if (googleMapsDistance.HasValue)
-				return googleMapsDistance.Value;
-			else
-				return distance;
+			// 	return googleMapsDistance.Value;
+			// }
+			// else
+			return distance;
 		}
 
 		public List<IndexDistance> GetIndicesDistance(List<int> AddressIds)

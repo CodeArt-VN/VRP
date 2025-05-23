@@ -50,22 +50,6 @@
             },
             "launchSettingsProfile": "http",
             "postDebugTask": "terminate-port-5123"
-        },
-        {
-            "name": ".NET Core Test",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "dotnet",
-            "args": [
-                "test",
-                "--project",
-                "${workspaceFolder}/SmartRouting.Tests/SmartRouting.Tests.csproj"
-            ],
-            "cwd": "${workspaceFolder}/SmartRouting.Tests",
-            "stopAtEntry": false,
-            "console": "internalConsole",
-            "postDebugTask": "terminate-port-5123"
         }
     ]
 }

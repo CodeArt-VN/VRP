@@ -4,9 +4,24 @@ namespace SmartRouting.Models
 {
 	public class CalcOption
 	{
-		public List<string> Priority { get; set; } = new List<string>(); // Danh sách ưu tiên: "Cost", "Weight", "Volume"
-		public FillOption WeightOption { get; set; } = FillOption.Recommended; // Tùy chọn trọng tải
-		public FillOption VolumeOption { get; set; } = FillOption.Recommended; // Tùy chọn thể tích
+		public List<Cost> Costs { get; set; } = new List<Cost>();
+		public Constraint Constraints { get; set; } = new Constraint();
+		public string SolutionStrategy { get; set; } = "SAVINGS"; //CHEAPEST, SAVINGS, SWEEP
+		
+
+	}
+
+	public class Constraint
+	{
+		public FillOption Weight { get; set; } = FillOption.Recommended; 
+		public FillOption Volume { get; set; } = FillOption.Recommended; 
+	}
+
+	//Cost per 1Km distance
+	public class Cost
+	{
+		public string Type { get; set; } = "Distance"; // e.g., "Distance", "Time", etc.
+		public double Value { get; set; } = 0.0; // Cost per unit (e.g., per km)
 
 	}
 
@@ -18,6 +33,4 @@ namespace SmartRouting.Models
 		Max,
 		Recommended
 	}
-	
-
 }

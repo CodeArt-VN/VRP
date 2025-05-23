@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using SmartRouting.Models;
+using System.Linq;
 
 namespace SmartRouting.Models
 {
@@ -12,10 +13,12 @@ namespace SmartRouting.Models
         public List<OrderLine>? OrderLines { get; set; }
         public DateTime? Deadline { get; set; }
         public string? Priority { get; set; }
-
+     
         // Navigation property for Address
         [ForeignKey("IDAddress")]
         public Address? Address { get; set; }
+        public double Volume { get; set; }
+        public double Weight { get; set; }
     }
 
     public class OrderLine

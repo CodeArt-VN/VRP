@@ -7,100 +7,99 @@ Content-Type: application/json
 
 {
   "Option": {
-	"priority": [
-     "OrderType",
-	 "Distance",
-     "Weight",
-     "Volume",
-     "Cost"
-   ],
-    "weightOption": "Recommended",
-    "volumeOption": "Recommended"
+    "Costs": [
+      { "Type": "Distance", "Value": 1.0 }
+    ],
+    "Constraints": {
+      "Weight": "Recommended",
+      "Volume": "None"
+    },
+    "SolutionStrategy": "CHEAPEST"
   },
 
   "vehicles": [
     {
       "id": 1,
       "code": "V001",
-      "name": "Vehicle 1 (1-2 Ton)",
-      "length": 5.0,
-      "width": 2.0,
-      "height": 2.0,
+      "name": "Xe Tải 2.5 Tấn",
+      "length": 5.5,
+      "width": 2.2,
+      "height": 2.2,
       "vehicleType": "Truck",
       "minVolume": 0.0,
-      "recommendedVolume": 15.0,
-      "maxVolume": 20.0,
-      "minWeight": 1000.0,
-      "recommendedWeight": 1500.0,
-      "maxWeight": 2000.0,
+      "recommendedVolume": 20000.0,
+      "maxVolume": 25000.0,
+      "minWeight": 0.0,
+      "recommendedWeight": 2000.0,
+      "maxWeight": 2500.0,
       "operatingArea": "City",
       "restrictedRoutes": null
     },
     {
       "id": 2,
       "code": "V002",
-      "name": "Vehicle 2 (1-2 Ton)",
-      "length": 5.0,
-      "width": 2.0,
-      "height": 2.0,
+      "name": "Xe Tải 2.5 Tấn",
+      "length": 5.5,
+      "width": 2.2,
+      "height": 2.2,
       "vehicleType": "Truck",
       "minVolume": 0.0,
-      "recommendedVolume": 15.0,
-      "maxVolume": 20.0,
-      "minWeight": 1000.0,
-      "recommendedWeight": 1500.0,
-      "maxWeight": 2000.0,
+      "recommendedVolume": 20000.0,
+      "maxVolume": 25000.0,
+      "minWeight": 0.0,
+      "recommendedWeight": 2000.0,
+      "maxWeight": 2500.0,
       "operatingArea": "City",
       "restrictedRoutes": null
     },
     {
       "id": 3,
       "code": "V003",
-      "name": "Vehicle 3 (1-2 Ton)",
-      "length": 5.0,
-      "width": 2.0,
-      "height": 2.0,
+      "name": "Xe Tải 3.5 Tấn",
+      "length": 6.0,
+      "width": 2.4,
+      "height": 2.4,
       "vehicleType": "Truck",
       "minVolume": 0.0,
-      "recommendedVolume": 15.0,
-      "maxVolume": 20.0,
-      "minWeight": 1000.0,
-      "recommendedWeight": 1500.0,
-      "maxWeight": 2000.0,
+      "recommendedVolume": 28000.0,
+      "maxVolume": 35000.0,
+      "minWeight": 0.0,
+      "recommendedWeight": 2800.0,
+      "maxWeight": 3500.0,
       "operatingArea": "City",
       "restrictedRoutes": null
     },
     {
       "id": 4,
       "code": "V004",
-      "name": "Vehicle 4 (1-2 Ton)",
-      "length": 5.0,
-      "width": 2.0,
-      "height": 2.0,
+      "name": "Xe Tải 3.5 Tấn",
+      "length": 6.0,
+      "width": 2.4,
+      "height": 2.4,
       "vehicleType": "Truck",
       "minVolume": 0.0,
-      "recommendedVolume": 15.0,
-      "maxVolume": 20.0,
-      "minWeight": 1000.0,
-      "recommendedWeight": 1500.0,
-      "maxWeight": 2000.0,
+      "recommendedVolume": 28000.0,
+      "maxVolume": 35000.0,
+      "minWeight": 0.0,
+      "recommendedWeight": 2800.0,
+      "maxWeight": 3500.0,
       "operatingArea": "City",
       "restrictedRoutes": null
     },
     {
       "id": 5,
       "code": "V005",
-      "name": "Vehicle 5 (1-2 Ton)",
-      "length": 5.0,
-      "width": 2.0,
-      "height": 2.0,
+      "name": "Xe Tải 5 Tấn",
+      "length": 7.0,
+      "width": 2.5,
+      "height": 2.5,
       "vehicleType": "Truck",
       "minVolume": 0.0,
-      "recommendedVolume": 15.0,
-      "maxVolume": 20.0,
-      "minWeight": 1000.0,
-      "recommendedWeight": 1500.0,
-      "maxWeight": 2000.0,
+      "recommendedVolume": 40000.0,
+      "maxVolume": 50000.0,
+      "minWeight": 0.0,
+      "recommendedWeight": 4000.0,
+      "maxWeight": 5000.0,
       "operatingArea": "City",
       "restrictedRoutes": null
     }
@@ -114,7 +113,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 1 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+        { "item": "Order 1 Goods", "quantity": 1, "weight": 600, "volume": 342 }
       ]
     },
     {
@@ -125,7 +124,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 2 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+        { "item": "Order 2 Goods", "quantity": 1, "weight": 580, "volume": 785 }
       ]
     },
     {
@@ -136,7 +135,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 3 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+        { "item": "Order 3 Goods", "quantity": 1, "weight": 620, "volume": 123 }
       ]
     },
     {
@@ -147,7 +146,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 4 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+        { "item": "Order 4 Goods", "quantity": 1, "weight": 590, "volume": 576 }
       ]
     },
     {
@@ -158,7 +157,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 5 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+        { "item": "Order 5 Goods", "quantity": 1, "weight": 610, "volume": 891 }
       ]
     },
     {
@@ -169,7 +168,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 6 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+        { "item": "Order 6 Goods", "quantity": 1, "weight": 600, "volume": 247 }
       ]
     },
     {
@@ -180,7 +179,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 7 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+        { "item": "Order 7 Goods", "quantity": 1, "weight": 580, "volume": 632 }
       ]
     },
     {
@@ -191,7 +190,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 8 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+        { "item": "Order 8 Goods", "quantity": 1, "weight": 620, "volume": 453 }
       ]
     },
     {
@@ -202,7 +201,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 9 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+        { "item": "Order 9 Goods", "quantity": 1, "weight": 590, "volume": 789 }
       ]
     },
     {
@@ -213,7 +212,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 10 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+        { "item": "Order 10 Goods", "quantity": 1, "weight": 610, "volume": 321 }
       ]
     },
     {
@@ -224,7 +223,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 11 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+        { "item": "Order 11 Goods", "quantity": 1, "weight": 600, "volume": 147 }
       ]
     },
     {
@@ -235,7 +234,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 12 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+        { "item": "Order 12 Goods", "quantity": 1, "weight": 580, "volume": 658 }
       ]
     },
     {
@@ -246,7 +245,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 13 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+        { "item": "Order 13 Goods", "quantity": 1, "weight": 620, "volume": 972 }
       ]
     },
     {
@@ -257,7 +256,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 14 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+        { "item": "Order 14 Goods", "quantity": 1, "weight": 590, "volume": 433 }
       ]
     },
     {
@@ -268,7 +267,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 15 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+        { "item": "Order 15 Goods", "quantity": 1, "weight": 610, "volume": 825 }
       ]
     },
     {
@@ -279,7 +278,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 16 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+        { "item": "Order 16 Goods", "quantity": 1, "weight": 600, "volume": 219 }
       ]
     },
     {
@@ -290,7 +289,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 17 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+        { "item": "Order 17 Goods", "quantity": 1, "weight": 580, "volume": 512 }
       ]
     },
     {
@@ -301,7 +300,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 18 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+        { "item": "Order 18 Goods", "quantity": 1, "weight": 620, "volume": 371 }
       ]
     },
     {
@@ -312,7 +311,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 19 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+        { "item": "Order 19 Goods", "quantity": 1, "weight": 590, "volume": 644 }
       ]
     },
     {
@@ -323,7 +322,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 20 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+        { "item": "Order 20 Goods", "quantity": 1, "weight": 610, "volume": 502 }
       ]
     },
     {
@@ -334,7 +333,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 21 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+        { "item": "Order 21 Goods", "quantity": 1, "weight": 600, "volume": 187 }
       ]
     },
     {
@@ -345,7 +344,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 22 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+        { "item": "Order 22 Goods", "quantity": 1, "weight": 580, "volume": 723 }
       ]
     },
     {
@@ -356,7 +355,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 23 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+        { "item": "Order 23 Goods", "quantity": 1, "weight": 620, "volume": 298 }
       ]
     },
     {
@@ -367,7 +366,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 24 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+        { "item": "Order 24 Goods", "quantity": 1, "weight": 590, "volume": 852 }
       ]
     },
     {
@@ -378,7 +377,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 25 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+        { "item": "Order 25 Goods", "quantity": 1, "weight": 610, "volume": 426 }
       ]
     },
     {
@@ -389,7 +388,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 26 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+        { "item": "Order 26 Goods", "quantity": 1, "weight": 600, "volume": 739 }
       ]
     },
     {
@@ -400,7 +399,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 27 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+        { "item": "Order 27 Goods", "quantity": 1, "weight": 580, "volume": 561 }
       ]
     },
     {
@@ -411,7 +410,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 28 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+        { "item": "Order 28 Goods", "quantity": 1, "weight": 620, "volume": 814 }
       ]
     },
     {
@@ -422,7 +421,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 29 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+        { "item": "Order 29 Goods", "quantity": 1, "weight": 590, "volume": 378 }
       ]
     },
     {
@@ -433,7 +432,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 30 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+        { "item": "Order 30 Goods", "quantity": 1, "weight": 610, "volume": 943 }
       ]
     },
     {
@@ -444,7 +443,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 31 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+        { "item": "Order 31 Goods", "quantity": 1, "weight": 600, "volume": 276 }
       ]
     },
     {
@@ -455,7 +454,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 32 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+        { "item": "Order 32 Goods", "quantity": 1, "weight": 580, "volume": 690 }
       ]
     },
     {
@@ -466,7 +465,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 33 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+        { "item": "Order 33 Goods", "quantity": 1, "weight": 620, "volume": 418 }
       ]
     },
     {
@@ -477,7 +476,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 34 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+        { "item": "Order 34 Goods", "quantity": 1, "weight": 590, "volume": 753 }
       ]
     },
     {
@@ -488,7 +487,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 35 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+        { "item": "Order 35 Goods", "quantity": 1, "weight": 610, "volume": 267 }
       ]
     },
     {
@@ -499,7 +498,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 36 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+        { "item": "Order 36 Goods", "quantity": 1, "weight": 600, "volume": 834 }
       ]
     },
     {
@@ -510,7 +509,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 37 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+        { "item": "Order 37 Goods", "quantity": 1, "weight": 580, "volume": 592 }
       ]
     },
     {
@@ -521,7 +520,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 38 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+        { "item": "Order 38 Goods", "quantity": 1, "weight": 620, "volume": 163 }
       ]
     },
     {
@@ -532,7 +531,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 39 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+        { "item": "Order 39 Goods", "quantity": 1, "weight": 590, "volume": 712 }
       ]
     },
     {
@@ -543,7 +542,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 40 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+        { "item": "Order 40 Goods", "quantity": 1, "weight": 610, "volume": 479 }
       ]
     },
     {
@@ -554,7 +553,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 41 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+        { "item": "Order 41 Goods", "quantity": 1, "weight": 600, "volume": 924 }
       ]
     },
     {
@@ -565,7 +564,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 42 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+        { "item": "Order 42 Goods", "quantity": 1, "weight": 580, "volume": 385 }
       ]
     },
     {
@@ -576,7 +575,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 43 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+        { "item": "Order 43 Goods", "quantity": 1, "weight": 620, "volume": 539 }
       ]
     },
     {
@@ -587,7 +586,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 44 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+        { "item": "Order 44 Goods", "quantity": 1, "weight": 590, "volume": 671 }
       ]
     },
     {
@@ -598,7 +597,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 45 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+        { "item": "Order 45 Goods", "quantity": 1, "weight": 610, "volume": 249 }
       ]
     },
     {
@@ -609,7 +608,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 46 Goods", "quantity": 1, "weight": 600, "volume": 0.6 }
+        { "item": "Order 46 Goods", "quantity": 1, "weight": 600, "volume": 783 }
       ]
     },
     {
@@ -620,7 +619,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 47 Goods", "quantity": 1, "weight": 580, "volume": 0.58 }
+        { "item": "Order 47 Goods", "quantity": 1, "weight": 580, "volume": 407 }
       ]
     },
     {
@@ -631,7 +630,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 48 Goods", "quantity": 1, "weight": 620, "volume": 0.62 }
+        { "item": "Order 48 Goods", "quantity": 1, "weight": 620, "volume": 935 }
       ]
     },
     {
@@ -642,7 +641,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 49 Goods", "quantity": 1, "weight": 590, "volume": 0.59 }
+        { "item": "Order 49 Goods", "quantity": 1, "weight": 590, "volume": 315 }
       ]
     },
     {
@@ -653,7 +652,7 @@ Content-Type: application/json
       "priority": "Medium",
       "deadline": "2025-05-23T17:00:00Z",
       "orderLines": [
-        { "item": "Order 50 Goods", "quantity": 1, "weight": 610, "volume": 0.61 }
+        { "item": "Order 50 Goods", "quantity": 1, "weight": 610, "volume": 876 }
       ]
     }
   ],
