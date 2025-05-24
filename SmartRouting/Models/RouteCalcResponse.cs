@@ -11,6 +11,7 @@ namespace SmartRouting.Models
 	public class Shipment
 	{
 		public int IDVehicle { get; set; }
+		public int Trip { get; set; } // Added for trip number
 		public List<RoutePoint> Route { get; set; } = new List<RoutePoint>();
 		public double TotalDistance { get; set; } // Added for total distance of the route
 		public int TotalTime { get; set; } // Changed from string to int (minutes)

@@ -5,7 +5,8 @@ using SmartRouting.Models;
 using NetTopologySuite.Geometries; // Required for Point
 using Google.OrTools.ConstraintSolver;
 using Google.Protobuf.WellKnownTypes; // Required for OR-Tools
-using SmartRouting.Services; // For RoutingStrategies
+using SmartRouting.Services;
+using System.Reflection.Emit; // For RoutingStrategies
 
 namespace SmartRouting.Services
 {
@@ -42,7 +43,7 @@ namespace SmartRouting.Services
 				throw new ArgumentException("Invalid request: Vehicles or Orders are null.");
 			}
 
-			var shipments = new List<Shipment>();
+			
 			var unassignedOrders = new List<UnassignedOrder>();
 
 			// 2. Get the list of delivery addresses from Address based on IDAddress.
@@ -77,6 +78,57 @@ namespace SmartRouting.Services
 				order.Volume = order.OrderLines?.Sum(ol => ol.Volume * ol.Quantity) ?? 0;
 			}
 
+			// Check Orders that exceed weight constraints config
+			if (_option?.Constraints.Weight != FillOption.None)
+			{
+				var weightLimit = _option.Constraints.Weight switch
+				{
+					FillOption.Min => vehicles.Max(v => v.WeightMin), 
+					FillOption.Recommended => vehicles.Max(v => v.WeightRecommended), 
+					FillOption.Max => vehicles.Max(v => v.WeightMax)
+				};
+
+				var ordersExceedingWeight = orders.Where(o => o.Weight > weightLimit).ToList();
+				if (ordersExceedingWeight.Any())
+				{
+					unassignedOrders.AddRange(ordersExceedingWeight.Select(o => new UnassignedOrder
+					{
+						IDOrder = o.Id,
+						Reason = "Order exceeds weight constraints."
+					}));
+
+					// Remove orders exceeding weight from the original list
+					orders = orders.Except(ordersExceedingWeight).ToList();
+				}
+			}
+
+			// Check Orders that exceed volume constraints config
+			if (_option?.Constraints.Volume != FillOption.None)
+			{
+				var volumeLimit = _option.Constraints.Volume switch
+				{
+					FillOption.Min => vehicles.Max(v => v.VolumeMin),
+					FillOption.Recommended => vehicles.Max(v => v.VolumeRecommended),
+					FillOption.Max => vehicles.Max(v => v.VolumeMax)
+				};
+
+				var ordersExceedingVolume = orders.Where(o => o.Volume > volumeLimit).ToList();
+				if (ordersExceedingVolume.Any())
+				{
+					unassignedOrders.AddRange(ordersExceedingVolume.Select(o => new UnassignedOrder
+					{
+						IDOrder = o.Id,
+						Reason = "Order exceeds volume constraints."
+					}));
+
+					// Remove orders exceeding volume from the original list
+					orders = orders.Except(ordersExceedingVolume).ToList();
+				}
+			}
+			
+
+			
+
 			// Merge the depot to node list at the beginning
 			var depotAddress = deliveryAddresses.FirstOrDefault(a => a.Id == iDDepotAddress);
 			if (depotAddress != null)
@@ -88,25 +140,42 @@ namespace SmartRouting.Services
 				});
 			}
 			else
-			{ 
+			{
 				throw new Exception($"Depot address with ID {iDDepotAddress} not found.");
 			}
 
 			List<IndexDistance> cachedDistances = _distanceService.GetIndicesDistance(deliveryAddresses.Select(a => a.Id).ToList());
 
-			// 3. Assign orders based on Options
-			shipments = AssignOrdersToVehicles(vehicles, orders, cachedDistances);
+			int trip = 1;
+			var shipments = new List<Shipment>();
 
-			// Check if there are any unassigned orders then add them to unassignedOrders
-			var unassignedOrderIds = orders.Select(o => o.Id).Except(shipments.SelectMany(s => s.Route).Select(r => r.IDOrder)).ToList();
-			if (unassignedOrderIds.Any())
+			AssignRemainingOrders:
+			// 3. Assign orders based on Options
+			shipments.AddRange(AssignOrdersToVehicles(vehicles, orders, cachedDistances, trip));
+
+			// Remove those that have been assigned to shipments
+			orders.RemoveAll(o => shipments.SelectMany(s => s.Route).Select(r => r.IDOrder).Contains(o.Id));
+			
+			// Run again if there are still unassigned orders
+			if (orders.Any(d => d.IDAddress != depotAddress.Id))
 			{
-				unassignedOrders.AddRange(unassignedOrderIds.Select(id => new UnassignedOrder
-				{
-					IDOrder = id,
-					Reason = "No vehicle available."
-				}));
+				// Remove vehicle with ID -1 (the huge fallback vehicle)
+				vehicles.RemoveAll(v => v.Id == -1);
+				trip++;
+
+				// Sort vehicles by total time Ascending to fill the vehicle with the least time first
+				// Calculate total time for each vehicle based on current shipments
+				var vehicleTimeDict = shipments
+					.GroupBy(s => s.IDVehicle)
+					.ToDictionary(g => g.Key, g => g.Sum(s => s.TotalTime));
+
+				vehicles = vehicles
+					.OrderBy(v => vehicleTimeDict.ContainsKey(v.Id) ? vehicleTimeDict[v.Id] : 0)
+					.ToList();
+
+				goto AssignRemainingOrders;
 			}
+
 
 			// 4. Return the list of Shipments and UnassignedOrders in RouteCalcResponse.
 			return new RouteCalcResponse
@@ -116,21 +185,24 @@ namespace SmartRouting.Services
 			};
 		}
 
-		private List<Shipment> AssignOrdersToVehicles(List<Vehicle> vehicles, List<DeliveryOrder> orders, List<IndexDistance> cachedDistances)
+		private List<Shipment> AssignOrdersToVehicles(List<Vehicle> vehicles, List<DeliveryOrder> orders, List<IndexDistance> cachedDistances, int trip)
 		{
 			Console.WriteLine($"Bắt đầu phân tài cho {orders.Count} đơn hàng và {vehicles.Count} xe");
 			var startTime = DateTime.Now;
 
-			// Add diagnostic information to check feasibility before solving
-			PerformFeasibilityCheck(vehicles, orders);
+			// Add 1 huge vehicle to the list to handle all orders when all vehicles are full
 
-			// Nếu số lượng đơn hàng lớn hơn 30, áp dụng thuật toán nhanh hơn
-			bool isLargeInstance = orders.Count > 30;
-			if (isLargeInstance)
+			vehicles.Add(new Vehicle
 			{
-				Console.WriteLine("Sử dụng tham số tối ưu cho số lượng đơn hàng lớn");
-			}
-			
+				Id = -1,
+				WeightMax = 1000000000,
+				VolumeMax = 1000000000,
+				WeightMin = 0,
+				VolumeMin = 0,
+				WeightRecommended = 1000000000,
+				VolumeRecommended = 1000000000
+			});
+
 			var manager = new RoutingIndexManager(orders.Count, vehicles.Count, 0);
 			var routing = new RoutingModel(manager);
 
@@ -139,45 +211,85 @@ namespace SmartRouting.Services
 			// since distance from A to B equals distance from B to A
 			var calculatedDistances = new Dictionary<(int, int), double>();
 
-			//// Define cost of each arc.
-			routing.SetArcCostEvaluatorOfAllVehicles(routing.RegisterTransitCallback((fromIndex, toIndex) =>
+
+			// routing.SetArcCostEvaluatorOfAllVehicles(routing.RegisterTransitCallback((fromIndex, toIndex) =>
+			// {
+			// 	// if (vehicleIndex == vehicles.Count - 1)
+			// 	// 	return 100000000; // Huge vehicle has extremely high travel cost
+
+			// 	int fromNode = manager.IndexToNode(fromIndex);
+			// 	int toNode = manager.IndexToNode(toIndex);
+
+			// 	if (fromNode == 0 || toNode == 0) return 0; // Cost from/to depot is 0
+
+			// 	var fromAddress = orders[fromNode].Address; // Node > 0 corresponds to orders[node]
+			// 	var toAddress = orders[toNode].Address; // Node > 0 corresponds to orders[node]
+
+			// 	if (fromAddress == null || toAddress == null) return long.MaxValue;
+
+			// 	// Create a normalized key to ensure we only store one distance per pair
+			// 	// regardless of direction (A→B or B→A)
+			// 	var key = fromAddress.Id < toAddress.Id
+			// 		? (fromAddress.Id, toAddress.Id)
+			// 		: (toAddress.Id, fromAddress.Id);
+
+			// 	if (!calculatedDistances.ContainsKey(key)) calculatedDistances[key] = _distanceService.CalculateDistance(fromAddress, toAddress, ref cachedDistances);
+				
+			// 	return (long)calculatedDistances[key];
+			// }));
+
+			/// Define cost for each vehicle
+			for (int i = 0; i < vehicles.Count; i++)
 			{
-				int fromNode = manager.IndexToNode(fromIndex);
-				int toNode = manager.IndexToNode(toIndex);
-
-				if (fromNode == 0 || toNode == 0) return 0; // Cost from/to depot is 0
-
-				var fromAddress = orders[fromNode].Address; // Node > 0 corresponds to orders[node]
-				var toAddress = orders[toNode].Address; // Node > 0 corresponds to orders[node]
-
-				if (fromAddress == null || toAddress == null) return long.MaxValue;
-
-				// Create a normalized key to ensure we only store one distance per pair
-				// regardless of direction (A→B or B→A)
-				var key = fromAddress.Id < toAddress.Id 
-					? (fromAddress.Id, toAddress.Id) 
-					: (toAddress.Id, fromAddress.Id);
-
-				if (!calculatedDistances.ContainsKey(key))
+				// Tạo một bản sao của i để sử dụng trong callback
+				int vehicleIndex = i;
+				routing.SetArcCostEvaluatorOfVehicle(routing.RegisterTransitCallback((fromIndex, toIndex) =>
 				{
-					// Calculate the distance and store it in our dictionary
-					calculatedDistances[key] = _distanceService.CalculateDistance(fromAddress, toAddress, ref cachedDistances);
-					
-					// Safety check for invalid distances
-					if (double.IsNaN(calculatedDistances[key]) || double.IsInfinity(calculatedDistances[key]))
-					{
-						Console.WriteLine($"Warning: Invalid distance calculation between addresses {fromAddress.Id} and {toAddress.Id}");
-						calculatedDistances[key] = 10000; // Default to a large but valid distance
-					}
-				}
+					if (vehicleIndex == vehicles.Count - 1)
+						return 100000000; // Huge vehicle has extremely high travel cost
 
-				return (long)calculatedDistances[key];
-			}));
+					int fromNode = manager.IndexToNode(fromIndex);
+					int toNode = manager.IndexToNode(toIndex);
+
+					if (fromNode == 0 || toNode == 0) return 0; // Cost from/to depot is 0
+
+					var fromAddress = orders[fromNode].Address; // Node > 0 corresponds to orders[node]
+					var toAddress = orders[toNode].Address; // Node > 0 corresponds to orders[node]
+
+					if (fromAddress == null || toAddress == null) return long.MaxValue;
+
+					// Create a normalized key to ensure we only store one distance per pair
+					// regardless of direction (A→B or B→A)
+					var key = fromAddress.Id < toAddress.Id
+						? (fromAddress.Id, toAddress.Id)
+						: (toAddress.Id, fromAddress.Id);
+
+					if (!calculatedDistances.ContainsKey(key)) calculatedDistances[key] = _distanceService.CalculateDistance(fromAddress, toAddress, ref cachedDistances);
+					
+					return (long)calculatedDistances[key];
+				}), vehicleIndex);
+
+				// Add fixed cost for vehicle i
+				long fixedVehicleCost;
+				if (i != vehicles.Count - 1)
+					fixedVehicleCost = i * 100000; // Priority vehicles have fixed cost based on their index
+				else
+					fixedVehicleCost = 9000000000; // Very high fixed cost for the huge fallback vehicle
+
+				// Set fixed cost for vehicle using OR-Tools API
+				routing.SetFixedCostOfVehicle(fixedVehicleCost, i);
+
+			}
 
 
 			//Check if the vehicle has weight constraint
 			if (_option?.Constraints.Weight != FillOption.None)
 			{
+				var weightLimits = vehicles.Select(v => (
+						_option?.Constraints.Weight == FillOption.Min ? (long)v.WeightMin :
+						_option?.Constraints.Weight == FillOption.Recommended ? (long)v.WeightRecommended :
+						(long)v.WeightMax
+					) * 1).ToArray();
 				// Add weight constraint
 				routing.AddDimensionWithVehicleCapacity(
 					routing.RegisterUnaryTransitCallback((long index) =>
@@ -186,12 +298,7 @@ namespace SmartRouting.Services
 						if (node == 0) return 0; // Depot node has zero weight
 						return (int)orders[node].Weight; // Node > 0 corresponds to orders[node]
 					}), 0,
-					vehicles.Select(v => (
-						_option?.Constraints.Weight == FillOption.Min ? (long)v.MinWeight :
-						_option?.Constraints.Weight == FillOption.Recommended ? (long)v.RecommendedWeight :
-						(long)v.MaxWeight
-					) * 1
-					).ToArray(), // Tải trọng tối đa cho từng xe
+					weightLimits, // Tải trọng tối đa cho từng xe
 					true, "Weight"
 				);
 			}
@@ -208,29 +315,45 @@ namespace SmartRouting.Services
 						return (int)orders[node].Volume; // Node > 0 corresponds to orders[node]
 					}), 0,
 					vehicles.Select(v => (
-						_option?.Constraints.Volume == FillOption.Min ? (long)v.MinVolume :
-						_option?.Constraints.Volume == FillOption.Recommended ? (long)v.RecommendedVolume :
-						(long)v.MaxVolume
-					) * 1 
+						_option?.Constraints.Volume == FillOption.Min ? (long)v.VolumeMin :
+						_option?.Constraints.Volume == FillOption.Recommended ? (long)v.VolumeRecommended :
+						(long)v.VolumeMax
+					) * 1
 					).ToArray(), // Thể tích tối đa cho từng xe
 					true, "Volume"
 				);
 			}
 
+			// Setting first solution heuristic.
+			RoutingSearchParameters searchParameters = operations_research_constraint_solver.DefaultRoutingSearchParameters();
+			searchParameters.FirstSolutionStrategy = FirstSolutionStrategy.Types.Value.PathCheapestArc;
+			searchParameters.LocalSearchMetaheuristic = LocalSearchMetaheuristic.Types.Value.GuidedLocalSearch;
+			searchParameters.TimeLimit = new Duration { Seconds = 30 }; // Overall time limit for solution
+			//searchParameters.LnsTimeLimit = new Duration { Seconds = 1 }; // Time limit for completion search of each local search neighbor
+			//searchParameters.LogSearch = true; // Enable search logging for better troubleshooting
+			//searchParameters.SolutionLimit = 100; // Limit the number of solutions to find
+			var solution = routing.SolveWithParameters(searchParameters);
+
+
 
 			// Try multiple strategies if needed to find a solution
-			var solution = RoutingStrategies.TryMultipleSolutionStrategies(routing, isLargeInstance);
+			// var solution = RoutingStrategies.TryMultipleSolutionStrategies(routing);
 
 			var endTime = DateTime.Now;
 			Console.WriteLine($"Thời gian chạy thuật toán: {(endTime - startTime).TotalMilliseconds} ms");
 
 			var avgSpeed = 30; // Average speed in km/h
 			var shipments = new List<Shipment>();
+			
 
 			if (solution != null)
 			{
 				for (int i = 0; i < vehicles.Count; i++)
 				{
+					//Check if the vehicle is the huge fallback vehicle
+					if (vehicles[i].Id == -1) 
+						continue; // Skip the huge fallback vehicle
+					
 					var route = new List<RoutePoint>();
 					var index = routing.Start(i);
 					double totalWeight = 0;
@@ -278,20 +401,20 @@ namespace SmartRouting.Services
 								if (fromAddress != null && toAddress != null)
 								{
 									// Use the same normalized key format as before
-									var key = fromAddress.Id < toAddress.Id 
-										? (fromAddress.Id, toAddress.Id) 
+									var key = fromAddress.Id < toAddress.Id
+										? (fromAddress.Id, toAddress.Id)
 										: (toAddress.Id, fromAddress.Id);
 
-									var distance = calculatedDistances.ContainsKey(key) 
-										? calculatedDistances[key] 
+									var distance = calculatedDistances.ContainsKey(key)
+										? calculatedDistances[key]
 										: _distanceService.CalculateDistance(fromAddress, toAddress, ref cachedDistances);
-									
+
 									// If the distance wasn't in our dictionary, store it now
 									if (!calculatedDistances.ContainsKey(key))
 									{
 										calculatedDistances[key] = distance;
 									}
-									
+
 									totalDistance += distance;
 									totalTime += (int)(distance / avgSpeed * 60); // Convert hours to minutes
 								}
@@ -302,13 +425,13 @@ namespace SmartRouting.Services
 					}
 
 					double vehicleMaxWeight =
-						(_option?.Constraints.Weight == FillOption.Min ? vehicles[i].MinWeight :
-						_option?.Constraints.Weight == FillOption.Recommended ? vehicles[i].RecommendedWeight :
-						vehicles[i].MaxWeight) * 1; // Convert to kg
+						(_option?.Constraints.Weight == FillOption.Min ? vehicles[i].WeightMin :
+						_option?.Constraints.Weight == FillOption.Recommended ? vehicles[i].WeightRecommended :
+						vehicles[i].WeightMax) * 1; // Convert to kg
 					double vehicleMaxVolume =
-						(_option?.Constraints.Volume == FillOption.Min ? vehicles[i].MinVolume :
-						_option?.Constraints.Volume == FillOption.Recommended ? vehicles[i].RecommendedVolume :
-						vehicles[i].MaxVolume) * 1; // Convert to liters
+						(_option?.Constraints.Volume == FillOption.Min ? vehicles[i].VolumeMin :
+						_option?.Constraints.Volume == FillOption.Recommended ? vehicles[i].VolumeRecommended :
+						vehicles[i].VolumeMax) * 1; // Convert to liters
 
 					// Only add non-empty routes
 					if (route.Count > 0)
@@ -316,6 +439,7 @@ namespace SmartRouting.Services
 						shipments.Add(new Shipment
 						{
 							IDVehicle = vehicles[i].Id,
+							Trip = trip,
 							Route = route,
 							TotalDistance = totalDistance,
 							TotalTime = totalTime,
@@ -331,155 +455,14 @@ namespace SmartRouting.Services
 			{
 				Console.WriteLine("WARNING: All solution strategies failed to find a valid solution");
 				Console.WriteLine("Attempting fallback greedy assignment strategy...");
-				
-				// Use fallback greedy algorithm when OR-Tools fails
-				shipments = FallbackGreedyAssignment(vehicles, orders, cachedDistances);
+
 			}
 
 			var endProcessingTime = DateTime.Now;
 			Console.WriteLine($"Tổng thời gian xử lý: {(endProcessingTime - startTime).TotalMilliseconds} ms");
-			
+
 			return shipments;
 		}
-
-		/// <summary>
-		/// Fallback greedy algorithm for when OR-Tools can't find a solution
-		/// Assigns orders to vehicles in a simple greedy manner based on weight/volume capacity
-		/// </summary>
-		private List<Shipment> FallbackGreedyAssignment(List<Vehicle> vehicles, List<DeliveryOrder> orders, List<IndexDistance> cachedDistances)
-		{
-			Console.WriteLine("Using fallback greedy assignment algorithm");
-			var shipments = new List<Shipment>();
-			var depotOrder = orders[0]; // The first order is the depot
-			
-			// Skip the depot order (index 0) when processing actual orders
-			var ordersToAssign = orders.Skip(1).ToList();
-			
-			// Sort orders by weight and volume in descending order (larger items first)
-			ordersToAssign = ordersToAssign
-				.OrderByDescending(o => o.Weight + o.Volume)
-				.ToList();
-				
-			foreach (var vehicle in vehicles)
-			{
-				double maxWeight = _option?.Constraints.Weight switch
-				{
-					FillOption.Min => vehicle.MinWeight,
-					FillOption.Recommended => vehicle.RecommendedWeight,
-					FillOption.Max => vehicle.MaxWeight,
-					_ => vehicle.MaxWeight // Default to max weight
-				};
-				
-				double maxVolume = _option?.Constraints.Volume switch
-				{
-					FillOption.Min => vehicle.MinVolume,
-					FillOption.Recommended => vehicle.RecommendedVolume,
-					FillOption.Max => vehicle.MaxVolume,
-					_ => vehicle.MaxVolume // Default to max volume
-				};
-				
-				var routePoints = new List<RoutePoint>();
-				double remainingWeight = maxWeight;
-				double remainingVolume = maxVolume;
-				double totalWeight = 0;
-				double totalVolume = 0;
-				double totalDistance = 0;
-				int totalTime = 0;
-				
-				// Try to assign orders to this vehicle
-				var assignedOrders = new List<DeliveryOrder>();
-				foreach (var order in ordersToAssign.Where(o => !shipments.Any(s => s.Route.Any(r => r.IDOrder == o.Id))))
-				{
-					// Check if the order fits in the remaining capacity
-					if (order.Weight <= remainingWeight && order.Volume <= remainingVolume)
-					{
-						assignedOrders.Add(order);
-						remainingWeight -= order.Weight;
-						remainingVolume -= order.Volume;
-						
-						totalWeight += order.Weight;
-						totalVolume += order.Volume;
-						
-						// Add to route
-						if (order.Address?.Location != null)
-						{
-							routePoints.Add(new RoutePoint
-							{
-								IDAddress = order.Address.Id,
-								IDOrder = order.Id,
-								Sequence = routePoints.Count + 1,
-								Latitude = order.Address.Location.Y,
-								Longitude = order.Address.Location.X,
-								StartTime = totalTime
-							});
-							
-							totalTime += 15; // Add 15 minutes for each stop
-						}
-					}
-					
-					// If we've reached capacity or assigned all orders, stop
-					if (remainingWeight < 1 || remainingVolume < 0.1)
-						break;
-				}
-				
-				// Calculate distances between route points (simple version)
-				if (routePoints.Count > 0)
-				{
-					// Start with distance from depot to first point
-					var firstOrder = assignedOrders.First();
-					if (depotOrder.Address != null && firstOrder.Address != null)
-					{
-						totalDistance += _distanceService.CalculateDistance(
-							depotOrder.Address, firstOrder.Address, ref cachedDistances);
-					}
-					
-					// Calculate distances between consecutive points
-					for (int i = 0; i < assignedOrders.Count - 1; i++)
-					{
-						var currentOrder = assignedOrders[i];
-						var nextOrder = assignedOrders[i + 1];
-						
-						if (currentOrder.Address != null && nextOrder.Address != null)
-						{
-							var distance = _distanceService.CalculateDistance(
-								currentOrder.Address, nextOrder.Address, ref cachedDistances);
-								
-							totalDistance += distance;
-							totalTime += (int)(distance / 30 * 60); // Convert hours to minutes (30 km/h speed)
-						}
-					}
-					
-					// Add distance from last point back to depot
-					var lastOrder = assignedOrders.Last();
-					if (lastOrder.Address != null && depotOrder.Address != null)
-					{
-						totalDistance += _distanceService.CalculateDistance(
-							lastOrder.Address, depotOrder.Address, ref cachedDistances);
-					}
-				}
-				
-				// Only add routes with assigned orders
-				if (routePoints.Count > 0)
-				{
-					shipments.Add(new Shipment
-					{
-						IDVehicle = vehicle.Id,
-						Route = routePoints,
-						TotalDistance = totalDistance,
-						TotalTime = totalTime,
-						TotalWeight = totalWeight,
-						TotalVolume = totalVolume,
-						WeightRate = maxWeight > 0 ? totalWeight / maxWeight : 0,
-						VolumeRate = maxVolume > 0 ? totalVolume / maxVolume : 0
-					});
-				}
-			}
-			
-			Console.WriteLine($"Fallback algorithm assigned {shipments.Sum(s => s.Route.Count)} orders to {shipments.Count} vehicles");
-			return shipments;
-		}
-
-		// Using RoutingStrategies class for multi-strategy solution approaches
 
 		private List<Address> GetDeliveryAddresses(List<int> list)
 		{
@@ -562,10 +545,9 @@ namespace SmartRouting.Services
 					// Determine weight capacity based on CalcOption.Constraints.WeightOption
 					int weightCapacity = _option?.Constraints.Weight switch
 					{
-						FillOption.Min => (int)(vehicle.MinWeight * 1000), // Minimum weight
-						FillOption.Recommended => (int)(vehicle.RecommendedWeight * 1000), // Recommended weight
-						FillOption.Max => (int)(vehicle.MaxWeight * 1000), // Maximum weight
-						_ => int.MaxValue // No constraint (None)
+						FillOption.Min => (int)vehicle.WeightMin, // Minimum weight
+						FillOption.Recommended => (int)vehicle.WeightRecommended, // Recommended weight
+						FillOption.Max => (int)vehicle.WeightMax, // Maximum weight
 					};
 
 					// Add weight dimension
@@ -577,10 +559,9 @@ namespace SmartRouting.Services
 					// Determine volume capacity based on CalcOption.Constraints.VolumeOption
 					int volumeCapacity = _option?.Constraints.Volume switch
 					{
-						FillOption.Min => (int)(vehicle.MinVolume * 1000), // Minimum volume
-						FillOption.Recommended => (int)(vehicle.RecommendedVolume * 1000), // Recommended volume
-						FillOption.Max => (int)(vehicle.MaxVolume * 1000), // Maximum volume	
-						_ => int.MaxValue // No constraint (None)
+						FillOption.Min => (int)(vehicle.VolumeMin),
+						FillOption.Recommended => (int)(vehicle.VolumeRecommended),
+						FillOption.Max => (int)(vehicle.VolumeMax)
 					};
 
 					// Add volume dimension
@@ -614,55 +595,6 @@ namespace SmartRouting.Services
 			return searchParameters;
 		}
 
-		/// <summary>
-		/// Checks if the total vehicle capacity can theoretically handle the total order demand
-		/// </summary>
-		private void PerformFeasibilityCheck(List<Vehicle> vehicles, List<DeliveryOrder> orders)
-		{
-			// Skip depot (index 0) in calculations
-			var totalOrderWeight = orders.Skip(1).Sum(o => o.Weight);
-			var totalOrderVolume = orders.Skip(1).Sum(o => o.Volume);
-			
-			double totalVehicleWeight = 0;
-			double totalVehicleVolume = 0;
-			
-			foreach (var vehicle in vehicles)
-			{
-				double weightCapacity = _option?.Constraints.Weight switch
-				{
-					FillOption.Min => vehicle.MinWeight,
-					FillOption.Recommended => vehicle.RecommendedWeight,
-					FillOption.Max => vehicle.MaxWeight,
-					_ => vehicle.MaxWeight // Default to max weight if no constraint
-				};
-				
-				double volumeCapacity = _option?.Constraints.Volume switch
-				{
-					FillOption.Min => vehicle.MinVolume,
-					FillOption.Recommended => vehicle.RecommendedVolume,
-					FillOption.Max => vehicle.MaxVolume,
-					_ => vehicle.MaxVolume // Default to max volume if no constraint
-				};
-				
-				totalVehicleWeight += weightCapacity;
-				totalVehicleVolume += volumeCapacity;
-			}
-			
-			var weightUtilization = totalOrderWeight / totalVehicleWeight * 100;
-			var volumeUtilization = totalOrderVolume / totalVehicleVolume * 100;
-			
-			Console.WriteLine($"FEASIBILITY CHECK: Total order weight: {totalOrderWeight:F2}, Total vehicle capacity: {totalVehicleWeight:F2}, Utilization: {weightUtilization:F2}%");
-			Console.WriteLine($"FEASIBILITY CHECK: Total order volume: {totalOrderVolume:F2}, Total vehicle capacity: {totalVehicleVolume:F2}, Utilization: {volumeUtilization:F2}%");
-			
-			if (totalOrderWeight > totalVehicleWeight)
-			{
-				Console.WriteLine("WARNING: Total order weight exceeds total vehicle weight capacity!");
-			}
-			
-			if (totalOrderVolume > totalVehicleVolume)
-			{
-				Console.WriteLine("WARNING: Total order volume exceeds total vehicle volume capacity!");
-			}
-		}
+
 	}
 }
