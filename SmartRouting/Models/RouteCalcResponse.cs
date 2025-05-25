@@ -36,6 +36,7 @@ namespace SmartRouting.Models
 		public int IDAddress { get; set; } // Address ID for the route point
 		public int IDOrder { get; set; } // Added to replace IDOrder
 		public int Sequence { get; set; } // Sequence number in the route
+		public double Distance { get; set; } // Distance for map marker
 		public double Latitude { get; set; } // Latitude for map marker
 		public double Longitude { get; set; } // Longitude for map marker
 		public int StartTime { get; set; } // Start time in minutes

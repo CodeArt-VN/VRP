@@ -212,41 +212,14 @@ namespace SmartRouting.Services
 			var calculatedDistances = new Dictionary<(int, int), double>();
 
 
-			// routing.SetArcCostEvaluatorOfAllVehicles(routing.RegisterTransitCallback((fromIndex, toIndex) =>
-			// {
-			// 	// if (vehicleIndex == vehicles.Count - 1)
-			// 	// 	return 100000000; // Huge vehicle has extremely high travel cost
-
-			// 	int fromNode = manager.IndexToNode(fromIndex);
-			// 	int toNode = manager.IndexToNode(toIndex);
-
-			// 	if (fromNode == 0 || toNode == 0) return 0; // Cost from/to depot is 0
-
-			// 	var fromAddress = orders[fromNode].Address; // Node > 0 corresponds to orders[node]
-			// 	var toAddress = orders[toNode].Address; // Node > 0 corresponds to orders[node]
-
-			// 	if (fromAddress == null || toAddress == null) return long.MaxValue;
-
-			// 	// Create a normalized key to ensure we only store one distance per pair
-			// 	// regardless of direction (A→B or B→A)
-			// 	var key = fromAddress.Id < toAddress.Id
-			// 		? (fromAddress.Id, toAddress.Id)
-			// 		: (toAddress.Id, fromAddress.Id);
-
-			// 	if (!calculatedDistances.ContainsKey(key)) calculatedDistances[key] = _distanceService.CalculateDistance(fromAddress, toAddress, ref cachedDistances);
-				
-			// 	return (long)calculatedDistances[key];
-			// }));
-
 			/// Define cost for each vehicle
 			for (int i = 0; i < vehicles.Count; i++)
 			{
-				// Tạo một bản sao của i để sử dụng trong callback
 				int vehicleIndex = i;
 				routing.SetArcCostEvaluatorOfVehicle(routing.RegisterTransitCallback((fromIndex, toIndex) =>
 				{
 					if (vehicleIndex == vehicles.Count - 1)
-						return 100000000; // Huge vehicle has extremely high travel cost
+						return 9000000; // Huge vehicle has extremely high travel cost
 
 					int fromNode = manager.IndexToNode(fromIndex);
 					int toNode = manager.IndexToNode(toIndex);
@@ -274,7 +247,7 @@ namespace SmartRouting.Services
 				if (i != vehicles.Count - 1)
 					fixedVehicleCost = i * 100000; // Priority vehicles have fixed cost based on their index
 				else
-					fixedVehicleCost = 9000000000; // Very high fixed cost for the huge fallback vehicle
+					fixedVehicleCost = 99000000000; // Very high fixed cost for the huge fallback vehicle
 
 				// Set fixed cost for vehicle using OR-Tools API
 				routing.SetFixedCostOfVehicle(fixedVehicleCost, i);
@@ -328,16 +301,21 @@ namespace SmartRouting.Services
 			RoutingSearchParameters searchParameters = operations_research_constraint_solver.DefaultRoutingSearchParameters();
 			searchParameters.FirstSolutionStrategy = FirstSolutionStrategy.Types.Value.PathCheapestArc;
 			searchParameters.LocalSearchMetaheuristic = LocalSearchMetaheuristic.Types.Value.GuidedLocalSearch;
-			searchParameters.TimeLimit = new Duration { Seconds = 30 }; // Overall time limit for solution
-			//searchParameters.LnsTimeLimit = new Duration { Seconds = 1 }; // Time limit for completion search of each local search neighbor
-			//searchParameters.LogSearch = true; // Enable search logging for better troubleshooting
-			//searchParameters.SolutionLimit = 100; // Limit the number of solutions to find
+
+			var seconds = 5 + 0.5 * orders.Count + 0.2 * vehicles.Count;
+			searchParameters.TimeLimit    = new Duration { Seconds = (long)seconds };
+			searchParameters.LnsTimeLimit = new Duration { Seconds = (long)(seconds / 4) };
+
+			// searchParameters.TimeLimit = new Duration { Seconds = 30 }; // Overall time limit for solution
+			// searchParameters.LnsTimeLimit = new Duration { Seconds = 1 }; // Time limit for completion search of each local search neighbor
+			searchParameters.LogSearch = true; // Enable search logging for better troubleshooting
+			searchParameters.SolutionLimit = orders.Count * 5; // Limit the number of solutions to find
 			var solution = routing.SolveWithParameters(searchParameters);
 
 
 
-			// Try multiple strategies if needed to find a solution
-			// var solution = RoutingStrategies.TryMultipleSolutionStrategies(routing);
+			//Try multiple strategies if needed to find a solution
+			//var solution = RoutingStrategies.TryMultipleSolutionStrategies(routing,orders.Count, vehicles.Count);
 
 			var endTime = DateTime.Now;
 			Console.WriteLine($"Thời gian chạy thuật toán: {(endTime - startTime).TotalMilliseconds} ms");
@@ -359,6 +337,7 @@ namespace SmartRouting.Services
 					double totalWeight = 0;
 					double totalVolume = 0;
 					double totalDistance = 0;
+					double preToThisDistance = 0; // Distance from previous to current node
 					int totalTime = 0;
 
 					while (!routing.IsEnd(index))
@@ -378,7 +357,8 @@ namespace SmartRouting.Services
 									Sequence = route.Count + 1,
 									Latitude = address.Location.Y,
 									Longitude = address.Location.X,
-									StartTime = totalTime // Assign StartTime directly
+									StartTime = totalTime, // Assign StartTime directly
+									Distance = preToThisDistance,
 								});
 							}
 
@@ -414,7 +394,7 @@ namespace SmartRouting.Services
 									{
 										calculatedDistances[key] = distance;
 									}
-
+									preToThisDistance = distance; // Update distance from previous to current node
 									totalDistance += distance;
 									totalTime += (int)(distance / avgSpeed * 60); // Convert hours to minutes
 								}
@@ -454,8 +434,6 @@ namespace SmartRouting.Services
 			else
 			{
 				Console.WriteLine("WARNING: All solution strategies failed to find a valid solution");
-				Console.WriteLine("Attempting fallback greedy assignment strategy...");
-
 			}
 
 			var endProcessingTime = DateTime.Now;
@@ -474,101 +452,6 @@ namespace SmartRouting.Services
 			}).ToList();
 		}
 
-		private LongLongToLong CalcCosting(RoutingIndexManager manager, List<DeliveryOrder> orders, List<IndexDistance> cachedDistances)
-		{
-			Console.WriteLine("Warning: ---------------------- CalcCosting ----------------------");
-			return new LongLongToLong((fromIndex, toIndex) =>
-			{
-				Console.WriteLine("Warning: ---------------------- LongLongToLong ----------------------");
-				//return 100;
-				var fromNode = manager.IndexToNode((int)fromIndex);
-				var toNode = manager.IndexToNode((int)toIndex);
-
-				if (fromNode == 0 || toNode == 0)
-				{
-					return 0; // Cost from/to depot is 0
-				}
-
-				var fromAddress = orders[fromNode].Address; // Node > 0 corresponds to orders[node]
-				var toAddress = orders[toNode].Address; // Node > 0 corresponds to orders[node]
-
-				if (fromAddress == null || toAddress == null)
-				{
-					return long.MaxValue;
-				}
-
-				double totalCost = 0;
-
-				foreach (var cost in _option?.Costs ?? new List<Cost>())
-				{
-					/*
-					OrderType: Ưu tiên theo loại đơn hàng (e.g., giao hàng nhanh có thể có chi phí cao hơn).
-					Weight: Trọng lượng đơn hàng ảnh hưởng đến chi phí vận chuyển.
-					Volume: Thể tích đơn hàng ảnh hưởng đến chi phí vận chuyển.
-					Cost: Chi phí giao hàng trực tiếp.
-					Distance: Khoảng cách giao hàng ảnh hưởng đến chi phí nhiên liệu.
-					FuelEfficiency: Hiệu quả tiêu thụ nhiên liệu (giảm chi phí).
-					CO2Emission: Lượng khí thải CO2 (có thể được quy đổi thành chi phí môi trường).
-					*/
-					switch (cost.Type)
-					{
-						case "Distance":
-							double distance = _distanceService.CalculateDistance(fromAddress, toAddress, ref cachedDistances);
-							totalCost += distance * cost.Value;
-							break;
-						// case "OrderType":
-						// 	double orderTypeCost = CalculateOrderTypeCost(fromOrder, toOrder);
-						// 	totalCost += orderTypeCost * cost.Value;
-						// 	break;
-						// case "Weight":
-						// 	double weightCost = CalculateWeightCost(fromOrder, toOrder);
-						// 	totalCost += weightCost * cost.Value;
-						// 	break;
-						default:
-							// Log a warning or handle unsupported cost types
-							//Console.WriteLine($"Unsupported cost type: {cost.Type}");
-							break;
-					}
-				}
-
-				return (long)totalCost;
-			});
-		}
-
-		private void AddConstraints(RoutingModel routing, RoutingIndexManager manager, List<Vehicle> vehicles, int transitCallbackIndex)
-		{
-			Console.WriteLine("Warning: ---------------------- AddConstraints ----------------------");
-			foreach (var vehicle in vehicles)
-			{
-				if (_option?.Constraints.Weight != FillOption.None)
-				{
-					// Determine weight capacity based on CalcOption.Constraints.WeightOption
-					int weightCapacity = _option?.Constraints.Weight switch
-					{
-						FillOption.Min => (int)vehicle.WeightMin, // Minimum weight
-						FillOption.Recommended => (int)vehicle.WeightRecommended, // Recommended weight
-						FillOption.Max => (int)vehicle.WeightMax, // Maximum weight
-					};
-
-					// Add weight dimension
-					routing.AddDimension(transitCallbackIndex, 0, weightCapacity, true, "Weight");
-				}
-
-				if (_option?.Constraints.Volume != FillOption.None)
-				{
-					// Determine volume capacity based on CalcOption.Constraints.VolumeOption
-					int volumeCapacity = _option?.Constraints.Volume switch
-					{
-						FillOption.Min => (int)(vehicle.VolumeMin),
-						FillOption.Recommended => (int)(vehicle.VolumeRecommended),
-						FillOption.Max => (int)(vehicle.VolumeMax)
-					};
-
-					// Add volume dimension
-					routing.AddDimension(transitCallbackIndex, 0, volumeCapacity, true, "Volume");
-				}
-			}
-		}
 
 		private RoutingSearchParameters SolutionStrategy()
 		{
