@@ -15,13 +15,13 @@ namespace SmartRouting.Models
 		public List<RoutePoint> Route { get; set; } = new List<RoutePoint>();
 		public double TotalDistance { get; set; } // Added for total distance of the route
 		public int TotalTime { get; set; } // Changed from string to int (minutes)
-		public double TotalWeight { get; set; } // Added for total weight of the shipment
-		public double TotalVolume { get; set; } // Added for total volume of the shipment
-		public double TotalCost { get; set; } // Added for total cost of the shipment
+		public decimal TotalWeight { get; set; } // Added for total weight of the shipment
+		public decimal TotalVolume { get; set; } // Added for total volume of the shipment
+		public decimal TotalCost { get; set; } // Added for total cost of the shipment
 
 		// Added properties for capacity rate
-		public double WeightRate { get; set; } // Weight rate (0-1)
-		public double VolumeRate { get; set; } // Volume rate (0-1)
+		public decimal WeightRate { get; set; } // Weight rate (0-1)
+		public decimal VolumeRate { get; set; } // Volume rate (0-1)
 
     }
 

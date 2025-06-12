@@ -15,8 +15,8 @@ namespace SmartRouting.Models
     {
         public int Id { get; set; }
         public string? Name { get; set; }
-        public int Quantity { get; set; }
-        public double Weight { get; set; }
-        public double Volume { get; set; }
+        public decimal Quantity { get; set; }
+        public decimal Weight { get; set; }
+        public decimal Volume { get; set; }
     }
 }

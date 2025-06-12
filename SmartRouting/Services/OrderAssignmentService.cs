@@ -43,7 +43,7 @@ namespace SmartRouting.Services
 				throw new ArgumentException("Invalid request: Vehicles or Orders are null.");
 			}
 
-			
+
 			var unassignedOrders = new List<UnassignedOrder>();
 
 			// 2. Get the list of delivery addresses from Address based on IDAddress.
@@ -52,6 +52,13 @@ namespace SmartRouting.Services
 			soIds.Add(iDDepotAddress); // Add depot address to the list
 			var deliveryAddresses = GetDeliveryAddresses(soIds);
 			var ordersWithoutAddress = orders.Where(o => !deliveryAddresses.Any(a => a.Id == o.IDAddress)).ToList();
+
+			// Ensure depot address is included in the delivery addresses
+			if (!deliveryAddresses.Any(a => a.Id == iDDepotAddress))
+			{
+				throw new Exception($"Depot address with ID {iDDepotAddress} not found.");
+			}
+
 			if (ordersWithoutAddress.Any())
 			{
 				unassignedOrders.AddRange(ordersWithoutAddress.Select(o => new UnassignedOrder
@@ -83,8 +90,8 @@ namespace SmartRouting.Services
 			{
 				var weightLimit = _option.Constraints.Weight switch
 				{
-					FillOption.Min => vehicles.Max(v => v.WeightMin), 
-					FillOption.Recommended => vehicles.Max(v => v.WeightRecommended), 
+					FillOption.Min => vehicles.Max(v => v.WeightMin),
+					FillOption.Recommended => vehicles.Max(v => v.WeightRecommended),
 					FillOption.Max => vehicles.Max(v => v.WeightMax)
 				};
 
@@ -125,9 +132,9 @@ namespace SmartRouting.Services
 					orders = orders.Except(ordersExceedingVolume).ToList();
 				}
 			}
-			
 
-			
+
+
 
 			// Merge the depot to node list at the beginning
 			var depotAddress = deliveryAddresses.FirstOrDefault(a => a.Id == iDDepotAddress);
@@ -149,13 +156,13 @@ namespace SmartRouting.Services
 			int trip = 1;
 			var shipments = new List<Shipment>();
 
-			AssignRemainingOrders:
+		AssignRemainingOrders:
 			// 3. Assign orders based on Options
 			shipments.AddRange(AssignOrdersToVehicles(vehicles, orders, cachedDistances, trip));
 
 			// Remove those that have been assigned to shipments
 			orders.RemoveAll(o => shipments.SelectMany(s => s.Route).Select(r => r.IDOrder).Contains(o.Id));
-			
+
 			// Run again if there are still unassigned orders
 			if (orders.Any(d => d.IDAddress != depotAddress.Id))
 			{
@@ -238,7 +245,7 @@ namespace SmartRouting.Services
 						: (toAddress.Id, fromAddress.Id);
 
 					if (!calculatedDistances.ContainsKey(key)) calculatedDistances[key] = _distanceService.CalculateDistance(fromAddress, toAddress, ref cachedDistances);
-					
+
 					return (long)calculatedDistances[key];
 				}), vehicleIndex);
 
@@ -303,7 +310,7 @@ namespace SmartRouting.Services
 			searchParameters.LocalSearchMetaheuristic = LocalSearchMetaheuristic.Types.Value.GuidedLocalSearch;
 
 			var seconds = 5 + 0.5 * orders.Count + 0.2 * vehicles.Count;
-			searchParameters.TimeLimit    = new Duration { Seconds = (long)seconds };
+			searchParameters.TimeLimit = new Duration { Seconds = (long)seconds };
 			searchParameters.LnsTimeLimit = new Duration { Seconds = (long)(seconds / 4) };
 
 			// searchParameters.TimeLimit = new Duration { Seconds = 30 }; // Overall time limit for solution
@@ -322,20 +329,20 @@ namespace SmartRouting.Services
 
 			var avgSpeed = 30; // Average speed in km/h
 			var shipments = new List<Shipment>();
-			
+
 
 			if (solution != null)
 			{
 				for (int i = 0; i < vehicles.Count; i++)
 				{
 					//Check if the vehicle is the huge fallback vehicle
-					if (vehicles[i].Id == -1) 
+					if (vehicles[i].Id == -1)
 						continue; // Skip the huge fallback vehicle
-					
+
 					var route = new List<RoutePoint>();
 					var index = routing.Start(i);
-					double totalWeight = 0;
-					double totalVolume = 0;
+					decimal totalWeight = 0;
+					decimal totalVolume = 0;
 					double totalDistance = 0;
 					double preToThisDistance = 0; // Distance from previous to current node
 					int totalTime = 0;
@@ -404,11 +411,11 @@ namespace SmartRouting.Services
 						index = nextIndex;
 					}
 
-					double vehicleMaxWeight =
+					decimal vehicleMaxWeight =
 						(_option?.Constraints.Weight == FillOption.Min ? vehicles[i].WeightMin :
 						_option?.Constraints.Weight == FillOption.Recommended ? vehicles[i].WeightRecommended :
 						vehicles[i].WeightMax) * 1; // Convert to kg
-					double vehicleMaxVolume =
+					decimal vehicleMaxVolume =
 						(_option?.Constraints.Volume == FillOption.Min ? vehicles[i].VolumeMin :
 						_option?.Constraints.Volume == FillOption.Recommended ? vehicles[i].VolumeRecommended :
 						vehicles[i].VolumeMax) * 1; // Convert to liters

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Visualization</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtyM-Th784YwQUTquYa0WlFIj8C6RB2uM"></script>
+    <script>
+        function visualizeRoutes() {
+            const input = document.getElementById('jsonInput').value;
+            let data;
+
+            try {
+                data = JSON.parse(input);
+            } catch (error) {
+                alert('Invalid JSON format');
+                return;
+            }
+
+            const map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: { lat: 10.762622, lng: 106.660172 }, // Default center
+                mapTypeId: google.maps.MapTypeId.ROADMAP, // Set map type to ROADMAP
+                styles: [
+                    {
+                        featureType: 'all',
+                        elementType: 'labels',
+                        stylers: [
+                            { visibility: 'off' } // Hide all labels
+                        ]
+                    },
+                    {
+                        featureType: 'road',
+                        elementType: 'labels',
+                        stylers: [
+                            { visibility: 'on' } // Show road labels only
+                        ]
+                    }
+                ]
+            });
+
+            const colors = [
+                { background: "#FF0000", foreground: "#FFFFFF" },
+                { background: "#00FF00", foreground: "#000000" },
+                { background: "#0000FF", foreground: "#FFFFFF" },
+                { background: "#FFFF00", foreground: "#000000" },
+                { background: "#FF00FF", foreground: "#FFFFFF" },
+                { background: "#00FFFF", foreground: "#000000" }
+            ];
+
+            // Render map and markers
+            data.Shipments.forEach((shipment, index) => {
+                const tripPath = new google.maps.Polyline({
+                    path: shipment.Route.map(point => ({ lat: point.Latitude, lng: point.Longitude })),
+                    geodesic: true,
+                    strokeColor: colors[shipment.IDVehicle].background,
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                });
+
+                tripPath.setMap(map);
+
+                shipment.Route.forEach((point, pointIndex) => {
+                    const marker = new google.maps.Marker({
+                        position: { lat: point.Latitude, lng: point.Longitude },
+                        map,
+                        label: {
+                            text: `${pointIndex + 1}`,
+                            color: colors[shipment.IDVehicle].foreground,
+                            fontSize: "16px",
+                            fontWeight: "bold"
+                        },
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: 12, // Increase marker size
+                            fillColor: colors[shipment.IDVehicle].background,
+                            fillOpacity: 1.0,
+                            strokeWeight: 2,
+                            strokeColor: '#000000'
+                        }
+                    });
+
+                    // Ensure dropdown elements are dynamically created in the infoWindow content
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: `
+                            <div>
+                                <label for="vehicleSelect-${index}-${pointIndex}">Chọn xe:</label>
+                                <select id="vehicleSelect-${index}-${pointIndex}"></select>
+                                <br>
+                                <label for="tripSelect-${index}-${pointIndex}">Chọn chuyến:</label>
+                                <select id="tripSelect-${index}-${pointIndex}"></select>
+                                <br>
+                                <button onclick="saveMarkerUpdate(${index}, ${pointIndex}, 'vehicleSelect-${index}-${pointIndex}', 'tripSelect-${index}-${pointIndex}')">Lưu</button>
+                            </div>
+                        `
+                    });
+
+                    marker.addListener("click", () => {
+                        infoWindow.open(map, marker);
+
+                        // Wait for the infoWindow to render before populating dropdowns
+                        setTimeout(() => {
+                            const vehicleSelect = document.getElementById(`vehicleSelect-${index}-${pointIndex}`);
+                            const tripSelect = document.getElementById(`tripSelect-${index}-${pointIndex}`);
+
+                            if (!vehicleSelect || !tripSelect) {
+                                console.error("Dropdown elements not found in the DOM.");
+                                return;
+                            }
+
+                            // Clear existing options
+                            vehicleSelect.innerHTML = '';
+                            tripSelect.innerHTML = '';
+
+                            // Populate vehicle options
+                            const uniqueVehicles = [...new Set(data.Shipments.map(shipment => shipment.IDVehicle))];
+                            uniqueVehicles.forEach(vehicleId => {
+                                const option = document.createElement('option');
+                                option.value = vehicleId;
+                                option.textContent = `Vehicle ${vehicleId}`;
+                                if (vehicleId === shipment.IDVehicle) {
+                                    option.selected = true; // Pre-select the correct vehicle
+                                }
+                                vehicleSelect.appendChild(option);
+                            });
+
+                            // Populate trip options for the selected vehicle
+                            const tripsForVehicle = data.Shipments.filter(shipment => shipment.IDVehicle === shipment.IDVehicle);
+                            tripsForVehicle.forEach(trip => {
+                                const option = document.createElement('option');
+                                option.value = trip.Trip;
+                                option.textContent = `Trip ${trip.Trip}`;
+                                if (trip.Trip === shipment.Trip) {
+                                    option.selected = true; // Pre-select the correct trip
+                                }
+                                tripSelect.appendChild(option);
+                            });
+
+                            // Update trip options when a vehicle is selected
+                            vehicleSelect.addEventListener('change', () => {
+                                const selectedVehicleId = vehicleSelect.value;
+                                const tripsForVehicle = data.Shipments.filter(shipment => shipment.IDVehicle == selectedVehicleId);
+
+                                tripSelect.innerHTML = ''; // Clear existing trips
+                                tripsForVehicle.forEach(trip => {
+                                    const option = document.createElement('option');
+                                    option.value = trip.Trip;
+                                    option.textContent = `Trip ${trip.Trip}`;
+                                    if (trip.Trip === shipment.Trip) {
+                                        option.selected = true; // Pre-select the correct trip
+                                    }
+                                    tripSelect.appendChild(option);
+                                });
+                            });
+                        }, 100); // Delay to ensure DOM is updated
+                    });
+                });
+            });
+        }
+
+        function saveMarkerUpdate(shipmentIndex, pointIndex, vehicleSelectId, tripSelectId) {
+            const vehicleSelect = document.getElementById(vehicleSelectId).value;
+            const tripSelect = document.getElementById(tripSelectId).value;
+
+            // Update the JSON data
+            data.Shipments[shipmentIndex].Route[pointIndex].Vehicle = vehicleSelect;
+            data.Shipments[shipmentIndex].Route[pointIndex].Trip = tripSelect;
+
+            // Re-render the map with updated data
+            visualizeRoutes();
+        }
+    </script>
+</head>
+<body>
+    <h1>Route Visualization</h1>
+    <textarea id="jsonInput" rows="10" cols="50" placeholder="Enter JSON data here..."></textarea>
+    <br>
+    <button onclick="visualizeRoutes()">View Map</button>
+    <div id="map" style="height: 500px; width: 100%; margin-top: 20px;"></div>
+</body>
+</html>

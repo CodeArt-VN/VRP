@@ -17,16 +17,16 @@ namespace SmartRouting.Models
         // Navigation property for Address
         [ForeignKey("IDAddress")]
         public Address? Address { get; set; }
-        public double Volume { get; set; }
-        public double Weight { get; set; }
+        public decimal Volume { get; set; }
+        public decimal Weight { get; set; }
     }
 
     public class OrderLine
     {
         public int Id { get; set; }
         public string? Item { get; set; }
-        public int Quantity { get; set; }
-        public double Weight { get; set; }
-        public double Volume { get; set; }
+        public decimal Quantity { get; set; }
+        public decimal Weight { get; set; }
+        public decimal Volume { get; set; }
     }
 }

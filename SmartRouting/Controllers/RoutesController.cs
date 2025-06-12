@@ -43,7 +43,7 @@ namespace SmartRouting.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while calculating routes.");
-                return StatusCode(500, "An error occurred while processing your request.");
+                return StatusCode(500, ex.Message);
             }
         }
     }

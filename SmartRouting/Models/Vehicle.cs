@@ -7,20 +7,20 @@ namespace SmartRouting.Models
 		public int Id { get; set; }
 		public string? Code { get; set; }
 		public string? Name { get; set; }
-		public double Length { get; set; }
-		public double Width { get; set; }
-		public double Height { get; set; }
+		public decimal Length { get; set; }
+		public decimal Width { get; set; }
+		public decimal Height { get; set; }
 		public string? VehicleType { get; set; }
 
-		public double VolumeMin { get; set; }
-		public double VolumeRecommended { get; set; }
-		public double VolumeMax { get; set; }
-		public double VolumeRemaining { get; set; }
+		public decimal VolumeMin { get; set; }
+		public decimal VolumeRecommended { get; set; }
+		public decimal VolumeMax { get; set; }
+		public decimal VolumeRemaining { get; set; }
 
-	public double WeightMin { get; set; }
-	public double WeightRecommended { get; set; }
-	public double WeightMax { get; set; }
-	public double WeightRemaining { get; set; }
+	public decimal WeightMin { get; set; }
+	public decimal WeightRecommended { get; set; }
+	public decimal WeightMax { get; set; }
+	public decimal WeightRemaining { get; set; }
 
 		public string? OperatingArea { get; set; }
 		public string? RestrictedRoutes { get; set; }
